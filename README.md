@@ -4,7 +4,7 @@
 
 ---
 
-### Overview
+## Overview
 
 **NaijaPrice Tracker** is a frontend application built with **React (Vite)** and **TailwindCSS** that enables users to:
 
@@ -17,13 +17,13 @@ This project focuses on the **MVP "Utility Phase"** — helping users make infor
 
 ---
 
-### Product Vision
+## Product Vision
 
 To reduce the **Price Variance Gap** — the difference between what uninformed and informed buyers pay.
 
 ---
 
-### Features (Frontend - MVP)
+## Features (Frontend - MVP)
 
 - **Localized Price Feed**
 - Filter by location (State, LGA, Market)
@@ -43,7 +43,7 @@ To reduce the **Price Variance Gap** — the difference between what uninformed 
 - **User Profile**
 - Placeholder for reputation & activity
 
-### Tech Stack
+## Tech Stack
 
 - **Framework:** React (Vite)
 - **Styling:** TailwindCSS
@@ -53,7 +53,7 @@ To reduce the **Price Variance Gap** — the difference between what uninformed 
 
 ---
 
-### Project Structure
+## Project Structure
 
 src/
 │
@@ -66,50 +66,51 @@ src/
 
 ---
 
-### Future Features (V2)
+## Future Features (V2)
 
-#### Vendor profiles ("Digital Stalls")
+### Vendor profiles ("Digital Stalls")
 
-#### AI price anomaly detection
+### AI price anomaly detection
 
-#### Voice search (Pidgin, Yoruba, Hausa, Igbo)
+### Voice search (Pidgin, Yoruba, Hausa, Igbo)
 
-#### Price prediction insights
+### Price prediction insights
 
 ### Current Status
 
-#### In active development (Frontend MVP)
+### In active development (Frontend MVP)
 
-### Installation & Setup# Clone the repo
+## Installation & Setup# Clone the repo
 
-git clone https://github.com/your-username/naijaprice-frontend.git
+git clone https://github.com/mdmuche/naijaprice-frontend.git
 
-##### Navigate into the project
+### Navigate into the project
 
 cd naijaprice-frontend
 
-#### Install dependencies
+### Install dependencies
 
 npm install
 
-#### Start development server
+### Start development server
 
 npm run dev
 
-### Deployment
+## Deployment
 
 Planned deployment via:
 Vercel / Netlify (Frontend)
 
-### Monetization Strategy
+## Monetization Strategy
 
 SME Ads (local vendors)
 Market intelligence subscriptions
 Pay-per-click vendor leads
 
-### Contributing
+## Contributing
 
 This is currently a personal project, but contributions and ideas are welcome.
 
-📌 Author
+## Author
+
 Abula Martins Onyemuche
