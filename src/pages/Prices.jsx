@@ -3,12 +3,15 @@ import {
   Bell,
   CirclePlus,
   Clock,
+  FileChartColumn,
   MapPin,
   Search,
   SlidersHorizontal,
 } from "lucide-react";
 import Navigation from "../components/Navigation";
 import Feed from "../components/Feed";
+import PriceChart from "../components/PriceChart";
+import PriceTrendCard from "../components/PriceTrendCard";
 
 function Prices() {
   const navLinkClass = ({ isActive }) =>
@@ -19,9 +22,9 @@ function Prices() {
     }`;
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen justify-between">
       <Navigation />
-      <div className="w-[80%] flex flex-col gap-4 p-4 md:ml-64">
+      <div className="flex-1 flex flex-col gap-4 p-4 md:ml-64">
         <div className="flex items-center justify-between gap-4 mb-2 p-4 text-sm">
           <div className="flex items-center gap-2">
             <MapPin size={16} className="text-[#00C950] text-sm" />
@@ -66,25 +69,70 @@ function Prices() {
         <div>
           <div className="flex items-center justify-between gap-4 mb-4 bg-gray-50 p-4">
             <div>
-              <h2>Market Prices</h2>
-              <p>Showing 8 commodities . Mile 12 Market, Lagos</p>
+              <h2 className="text-lg font-semibold">Market Prices</h2>
+              <p className="text-sm text-gray-500">
+                Showing 8 commodities . Mile 12 Market, Lagos
+              </p>
             </div>
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 rounded-lg bg-white text-black font-normal px-4 py-2 cursor-pointer">
                 <SlidersHorizontal size={18} />
                 <span>Filter</span>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 rounded-lg bg-white text-black font-normal px-4 py-2 cursor-pointer">
                 <ArrowDownUp size={18} />
                 <span>Sort by:Latest</span>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 rounded-lg bg-[#00C950] text-white px-4 py-2 cursor-pointer">
                 <CirclePlus size={18} />
                 <span>Add Price</span>
               </div>
             </div>
           </div>
           <Feed />
+          {/* Price Trends and Market Summary */}
+          <div className="flex flex-col gap-4 xl:justify-between items-stretch p-4 xl:flex-row">
+            <PriceChart className="w-full 2xl:w-[55%]" />
+            <div className="w-full p-4 bg-white rounded-xl shadow-sm xl:w-[43%]">
+              <div>
+                <h2 className="text-lg font-semibold">
+                  Price Trends - Mile 12 Market
+                </h2>
+                <span className="text-sm text-gray-500">
+                  Last 30 days - top commodities
+                </span>
+              </div>
+              <div className="flex flex-col gap-4 mt-4">
+                <PriceTrendCard
+                  details={"Commodities cheaper today"}
+                  items={4}
+                  priceIcon={"down"}
+                  title={"Price Drops"}
+                />
+                <PriceTrendCard
+                  details={"Commodities more expensive today"}
+                  items={4}
+                  priceIcon={"up"}
+                  title={"Price Rises"}
+                />
+                <div className="bg-white p-4 rounded-xl shadow-sm">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-4">
+                      <div className="p-2 bg-gray-200 w-fit rounded-full">
+                        <FileChartColumn />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">Reports Today</h3>
+                        <p className={`text-sm `}>Verified Submissions</p>
+                      </div>
+                    </div>
+
+                    <div className={"font-semibold"}>127</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
