@@ -1,5 +1,5 @@
 import { TrendingDown, TrendingUp } from "lucide-react";
-import { timeAgo } from "../utils/TimeAgo";
+import { timeAgo } from "../utils/timeAgo";
 
 function CommodityCard({ item }) {
   const isUp = item.trendDirection === "up";
