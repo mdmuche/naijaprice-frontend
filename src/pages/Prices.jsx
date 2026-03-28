@@ -5,13 +5,14 @@ import {
   Clock,
   FileChartColumn,
   MapPin,
-  Search,
   SlidersHorizontal,
 } from "lucide-react";
 import Navigation from "../components/Navigation";
 import Feed from "../components/Feed";
 import PriceChart from "../components/PriceChart";
 import PriceTrendCard from "../components/PriceTrendCard";
+import SearchContainer from "../components/Search";
+import Filter from "../components/Filter";
 
 function Prices() {
   const navLinkClass = ({ isActive }) =>
@@ -53,18 +54,7 @@ function Prices() {
             <li className={navLinkClass({ isActive: false })}>Protein</li>
             <li className={navLinkClass({ isActive: false })}>Oil</li>
           </ul>
-          <div className="relative p-2">
-            <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
-              size={18}
-            />
-
-            <input
-              type="text"
-              placeholder="Search commodities..."
-              className="w-full pl-10 pr-4 py-2 bg-white rounded-full focus:outline-none focus:ring-2 focus:ring-[#00C950]"
-            />
-          </div>
+          <SearchContainer placeholder={"Search commodities..."} />
         </div>
         <div>
           <div className="flex items-center justify-between gap-4 mb-4 bg-gray-50 p-4">
@@ -75,10 +65,7 @@ function Prices() {
               </p>
             </div>
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-4 rounded-lg bg-white text-black font-normal px-4 py-2 cursor-pointer">
-                <SlidersHorizontal size={18} />
-                <span>Filter</span>
-              </div>
+              <Filter />
               <div className="flex items-center gap-4 rounded-lg bg-white text-black font-normal px-4 py-2 cursor-pointer">
                 <ArrowDownUp size={18} />
                 <span>Sort by:Latest</span>
@@ -108,14 +95,16 @@ function Prices() {
                   items={4}
                   priceIcon={"down"}
                   title={"Price Drops"}
+                  bgColor={"bg-[#C6F6D4]/50"}
                 />
                 <PriceTrendCard
                   details={"Commodities more expensive today"}
                   items={4}
                   priceIcon={"up"}
                   title={"Price Rises"}
+                  bgColor={"bg-[#FECACA]/50"}
                 />
-                <div className="bg-white p-4 rounded-xl shadow-sm">
+                <div className="bg-black/20 p-4 rounded-xl shadow-sm">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-4">
                       <div className="p-2 bg-gray-200 w-fit rounded-full">

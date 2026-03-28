@@ -1,10 +1,14 @@
 import { CircleCheck, TrendingDown, TrendingUp, Users } from "lucide-react";
 import { timeAgo } from "../utils/timeAgo";
+import { Link } from "react-router-dom";
 
 function CommodityCard({ item }) {
   const isUp = item.trendDirection === "up";
   return (
-    <div className="relative bg-white rounded-lg shadow-md p-4">
+    <Link
+      to={`/commodities/${item.id}`}
+      className="relative bg-white rounded-lg shadow-md p-4"
+    >
       {/* Image */}
       <img
         src={item.image}
@@ -52,7 +56,7 @@ function CommodityCard({ item }) {
         {/* Time */}
         <p className="text-[10px] text-gray-400">{timeAgo(item.createdAt)}</p>
       </div>
-    </div>
+    </Link>
   );
 }
 

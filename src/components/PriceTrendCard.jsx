@@ -1,8 +1,8 @@
 import { TrendingDown, TrendingUp } from "lucide-react";
 
-function PriceTrendCard({ priceIcon, title, details, items }) {
+function PriceTrendCard({ priceIcon, title, details, items, bgColor }) {
   return (
-    <div className="bg-white p-4 rounded-xl shadow-sm">
+    <div className={`${bgColor} p-4 rounded-xl shadow-sm`}>
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-4">
           <div className="p-2 bg-gray-200 w-fit rounded-full">
