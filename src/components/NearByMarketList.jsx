@@ -1,3 +1,4 @@
+import Btn from "./Btn";
 import NearbyMarketCard from "./NearbyMarketCard";
 
 const list = [
@@ -57,11 +58,7 @@ function NearByMarketList() {
           timeAgo={market.timeAgo}
         />
       ))}
-      <div className="flex items-center justify-center">
-        <button className="text-[#00C950] font-bold text-[16px] cursor-pointer">
-          + Suggest a Market
-        </button>
-      </div>
+      <Btn btnText={"+ Suggest a Market"} />
     </div>
   );
 }
