@@ -1,30 +1,78 @@
-import { Bell, Clock, MapPin } from "lucide-react";
+import { ArrowLeft, Share2, TrendingDown, TrendingUp } from "lucide-react";
 import Navigation from "../components/Navigation";
+import BtnSecondary from "../components/BtnSecondary";
+import { commodities } from "../data";
+import { useParams } from "react-router-dom";
 
 function Commodity() {
+  const { id } = useParams();
+  const commodityData = commodities.find((item) => item.id === Number(id));
   return (
     <div className="flex h-screen">
       <Navigation />
       <div className="flex-1 flex flex-col gap-4 p-4 md:ml-64">
-        <div className="flex items-center justify-between gap-4 mb-2 p-4 text-sm">
-          <div className="flex items-center gap-2">
-            <MapPin size={16} className="text-[#00C950] text-sm" />
-            <p>
-              <span className="font-light text-gray-500">
-                Lagos &gt; Kosofo &gt;
-              </span>{" "}
-              <span className="font-semibold">Mile 12 Market</span>
-            </p>
-            <div className="text-sm text-[#00C950] underline cursor-pointer">
-              Change location
+        {commodityData ? (
+          <>
+            <div className="flex items-center justify-between gap-4 mb-2 p-4 text-sm">
+              <div className="flex items-center gap-2">
+                <ArrowLeft size={16} className="text-black" />
+                <p>
+                  <span className="font-light text-gray-500">
+                    Prices &gt; Vegetables &gt;
+                  </span>{" "}
+                  <span className="font-semibold">Tomatoes (Big Basket)</span>
+                </p>
+              </div>
+              <BtnSecondary icon={<Share2 size={16} />} text="Share" />
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Bell size={20} />
-            <Clock className="text-gray-500" size={16} />
-            <span className="text-gray-500">Last updated: 2mins ago</span>
-          </div>
-        </div>
+            <div className="flex-1 flex flex-col items-center p-4">
+              {commodities
+                .filter((commodity) => commodity.id === Number(id))
+                .map((commodity) => (
+                  <div
+                    key={commodity.id}
+                    className="flex flex-col gap-2 items-center"
+                  >
+                    {" "}
+                    <div className="flex gap-2 items-center">
+                      {" "}
+                      <img
+                        className="w-12.5 h-12.5 rounded-lg object-cover"
+                        src={commodity.image}
+                        alt={commodity.title}
+                      />
+                      <h3 className="text-lg font-bold mt-2">
+                        {commodity.title}
+                      </h3>
+                    </div>
+                    <span className="text-3xl font-bold">
+                      {commodity.price}
+                    </span>
+                    <p className="text-gray-500 text-sm mt-2">
+                      {commodity.snippet}
+                    </p>
+                    <div
+                      className={`flex items-center gap-2 mt-2 ${commodity.trendDirection === "down" ? "bg-red-100" : "bg-[#00C950]/10"} p-2 rounded-xl`}
+                    >
+                      {commodity.trendDirection === "down" ? (
+                        <TrendingDown size={16} className="text-red-500" />
+                      ) : (
+                        <TrendingUp size={16} className="text-green-500" />
+                      )}
+                      <div
+                        className={`${commodity.trendDirection === "down" ? "text-red-500" : "text-green-500"} text-sm font-bold`}
+                      >
+                        <span className="mr-2">{commodity.trend}%</span>
+                        vs yesterday
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </>
+        ) : (
+          <div>No Items</div>
+        )}
       </div>
     </div>
   );

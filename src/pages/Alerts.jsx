@@ -2,6 +2,7 @@ import { Settings } from "lucide-react";
 import Navigation from "../components/Navigation";
 import AlertList from "../components/Alerts";
 import Btn from "../components/Btn";
+import BtnSecondary from "../components/BtnSecondary";
 
 function Alerts() {
   return (
@@ -18,10 +19,7 @@ function Alerts() {
             </p>
           </div>
 
-          <button className="flex items-center gap-2 text-gray-700 font-bold text-[16px] cursor-pointer shadow-sm border border-gray-300 rounded-md px-4 py-2 hover:bg-gray-100">
-            <Settings size={16} />
-            Settings
-          </button>
+          <BtnSecondary icon={<Settings size={16} />} text="Settings" />
         </div>
         <div className="w-full flex gap-4">
           <h3 className="w-fit text-[16px] font-semibold border-b-2 border-[#00C950]">
