@@ -14,7 +14,7 @@ function Navigation() {
       {/* Desktop Sidebar */}
       <nav className="hidden md:block fixed w-64 h-full bg-gray-100 p-4">
         <Link to="/" className="flex gap-2 items-center p-2.5 w-full">
-          <img src="./images/logo.svg" alt="Logo" />
+          <img src="/images/logo.svg" alt="Logo" />
           <h3 className="text-2xl font-bold">NaijaPrice</h3>
         </Link>
 
