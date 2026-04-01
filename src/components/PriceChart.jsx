@@ -20,7 +20,7 @@ const data = [
 function PriceChart({ className }) {
   return (
     <div className={`bg-white rounded-xl shadow-sm 2xl:p-4 ${className}`}>
-      <div className="flex items-center justify-between gap-4 mb-4">
+      <div className="flex flex-col items-start justify-between gap-4 mb-4 sm:flex-row sm:text-center">
         <div>
           <h2 className="text-lg font-semibold">
             Price Trends - Mile 12 Market

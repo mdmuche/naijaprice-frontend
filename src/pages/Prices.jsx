@@ -25,9 +25,9 @@ function Prices() {
   return (
     <div className="flex h-screen justify-between">
       <Navigation />
-      <div className="flex-1 flex flex-col gap-4 p-4 md:ml-64">
-        <div className="flex items-center justify-between gap-4 mb-2 p-4 text-sm">
-          <div className="flex items-center gap-2">
+      <div className="flex-1 flex flex-col gap-4 p-1 md:ml-64 md:p-4 sm:p-2">
+        <div className="flex flex-col items-start justify-between gap-4 mb-2 p-4 text-xs lg:text-sm lg:flex-row lg:items-center">
+          <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center">
             <MapPin size={16} className="text-[#00C950] text-sm" />
             <p>
               <span className="font-light text-gray-500">
@@ -57,7 +57,7 @@ function Prices() {
           <SearchContainer placeholder={"Search commodities..."} />
         </div>
         <div>
-          <div className="flex items-center justify-between gap-4 mb-4 bg-gray-50 p-4">
+          <div className="flex flex-col items-start justify-between gap-4 mb-4 bg-gray-50 p-4 lg:flex-row lg:items-center">
             <div>
               <h2 className="text-lg font-semibold">Market Prices</h2>
               <p className="text-sm text-gray-500">
@@ -68,11 +68,11 @@ function Prices() {
               <Filter />
               <div className="flex items-center gap-4 rounded-lg bg-white text-black font-normal px-4 py-2 cursor-pointer">
                 <ArrowDownUp size={18} />
-                <span>Sort by:Latest</span>
+                <span className="hidden sm:block">Sort by:Latest</span>
               </div>
               <div className="flex items-center gap-4 rounded-lg bg-[#00C950] text-white px-4 py-2 cursor-pointer">
                 <CirclePlus size={18} />
-                <span>Add Price</span>
+                <span className="hidden sm:block">Add Price</span>
               </div>
             </div>
           </div>

@@ -53,7 +53,7 @@ function Navigation() {
       </nav>
 
       {/* Mobile Bottom Nav */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around md:hidden p-2">
+      <nav className="fixed z-50 bottom-0 left-0 right-0 bg-white border-t flex justify-around md:hidden p-2">
         <NavLink to="/prices" className={navLinkClass}>
           <TrendingUp size={20} />
           <span className="text-xs">Prices</span>

@@ -18,7 +18,7 @@ function CommodityTrendChart() {
     <div className="w-full h-75 mt-2">
       <ResponsiveContainer>
         <LineChart data={data}>
-          {/* 🔥 Light grid lines */}
+          {/* Light grid lines */}
           <CartesianGrid
             stroke="#e5e7eb"
             strokeDasharray="3 3"
@@ -32,7 +32,7 @@ function CommodityTrendChart() {
             tick={{ fontSize: 12 }}
           />
 
-          {/* 🔥 Y Axis with prices */}
+          {/* Y Axis with prices */}
           <YAxis
             tickFormatter={(value) => `₦${value / 1000}k`}
             tick={{ fontSize: 12 }}
