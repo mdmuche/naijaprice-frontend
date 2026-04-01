@@ -3,6 +3,8 @@ import Navigation from "../components/Navigation";
 import BtnSecondary from "../components/BtnSecondary";
 import { commodities } from "../data";
 import { useParams } from "react-router-dom";
+import PriceHistory from "../components/PriceHistory";
+import PricePerMarketList from "../components/PricePerMarketList";
 
 function Commodity() {
   const { id } = useParams();
@@ -25,7 +27,7 @@ function Commodity() {
               </div>
               <BtnSecondary icon={<Share2 size={16} />} text="Share" />
             </div>
-            <div className="flex-1 flex flex-col items-center p-4">
+            <div className="flex flex-col items-center p-4">
               {commodities
                 .filter((commodity) => commodity.id === Number(id))
                 .map((commodity) => (
@@ -68,6 +70,10 @@ function Commodity() {
                     </div>
                   </div>
                 ))}
+            </div>
+            <div className="flex justify-between">
+              <PriceHistory />
+              <PricePerMarketList />
             </div>
           </>
         ) : (
