@@ -21,8 +21,8 @@ const MARKETS = [
 
 export default function MarketMap() {
   return (
-    <div className="w-[55%] h-full">
-      <div className="flex justify-between items-center mb-4">
+    <div className="w-full h-75 z-0 lg:h-full lg:w-[55%]">
+      <div className="flex flex-col items-start justify-between xl:items-center mb-4 xl:flex-row">
         <div className="flex gap-2 items-center">
           <div className="w-fit flex items-center gap-4 p-2 rounded-lg bg-[#00C950] text-white font-normal cursor-pointer">
             <Map />
@@ -33,7 +33,7 @@ export default function MarketMap() {
             List View
           </div>
         </div>
-        <div className="flex items-center gap-2 text-gray-600">
+        <div className="flex items-center gap-2 text-gray-600 mt-2 md:mt-0">
           <Ellipse />5 markets found in Lagos
         </div>
       </div>

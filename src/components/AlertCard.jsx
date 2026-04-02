@@ -22,7 +22,7 @@ function AlertCard({ alertDesc, status, timeAgo }) {
   }, [status]);
 
   return (
-    <div className="flex flex-col gap-4 p-4 rounded-lg bg-white shadow-md">
+    <div className="flex flex-col gap-4 p-1 sm:p-4 rounded-lg bg-white shadow-md">
       <div className="flex justify-between items-center gap-4">
         <div className="flex items-center gap-2">
           <div

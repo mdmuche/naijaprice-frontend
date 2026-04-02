@@ -3,8 +3,8 @@ import NearByMarketList from "./NearByMarketList";
 
 function NearByMarkets() {
   return (
-    <div className="w-[43%] h-full">
-      <div className="flex justify-between items-center mb-4">
+    <div className="w-full lg:w-[43%] lg:h-full">
+      <div className="flex items-start justify-between xl:items-center mb-4">
         <div className="flex flex-col gap-1">
           <h3 className="text-lg font-semibold">Nearby Markets</h3>
           <span className="text-sm text-gray-600">

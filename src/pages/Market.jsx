@@ -12,9 +12,9 @@ function Market() {
       <Navigation />
 
       {/* Main Content */}
-      <div className="flex flex-col gap-4 p-4 md:ml-64">
+      <div className="flex flex-1 flex-col gap-4 p-2 lg:p-4 md:ml-64">
         {/* Header */}
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col items-start justify-between xl:items-center xl:flex-row">
           <div>
             <h1 className="text-2xl font-bold">Market</h1>
             <p className="text-gray-600">
@@ -22,18 +22,19 @@ function Market() {
             </p>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col items-start lg:items-center gap-4 lg:flex-row">
             <SearchContainer placeholder="Search markets by name or location..." />
-            <Filter />
-
-            <div className="flex items-center gap-2">
-              <MapPin size={16} className="text-[#00C950]" />
-              Lagos, Nigeria
+            <div className="flex flex-row items-center">
+              <Filter />
+              <div className="flex items-center gap-2">
+                <MapPin size={16} className="text-[#00C950]" />
+                Lagos, Nigeria
+              </div>
             </div>
           </div>
         </div>
         {/* Market Section */}
-        <div className="flex-1 flex gap-4">
+        <div className="flex-1 flex-col flex gap-4 lg:flex-row">
           {/* Map */}
           <MarketMap />
           {/* Sidebar */}

@@ -33,7 +33,7 @@ function CreatePrice() {
   return (
     <div className="flex h-screen">
       <Navigation />
-      <div className="w-full flex flex-col gap-4 p-4 md:ml-64">
+      <div className="w-full flex flex-col gap-4 p-2 lg:p-4 md:ml-64">
         {/* Header */}
         <div className="w-full mx-auto flex items-center">
           <div>
@@ -43,27 +43,33 @@ function CreatePrice() {
             </p>
           </div>
         </div>
-        <div className="w-full mx-auto flex items-center rounded-lg bg-[#00C950]/10 shadow-md p-4">
-          <div className="w-[70%] flex items-center gap-4">
-            <div className="rounded-full bg-[#00C950]/20 p-3">
-              <MapPin size={16} />
+        <div className="w-full mx-auto flex gap-2 flex-col items-start rounded-lg bg-[#00C950]/10 shadow-md p-4 sm:flex-row sm:gap-0">
+          <div className="w-full flex flex-col lg:items-start gap-4 lg:w-[70%] lg:flex-row">
+            <div className="flex flex-col gap-2 items-start">
+              <div className="flex gap-2 items-center">
+                <div className="rounded-full bg-[#00C950]/20 p-3">
+                  <MapPin size={16} />
+                </div>
+                <h3 className="font-bold lg:text-[20px]">
+                  Detected Mile 12 Market Lagos
+                </h3>
+              </div>
+
+              <div>
+                <p className="text-gray-600 text-sm">
+                  GPS auto-detected location
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-bold text-[20px]">
-                Detected Mile 12 Market Lagos
-              </h3>
-              <p className="text-gray-600 text-sm">
-                GPS auto-detected location
-              </p>
-            </div>
-            <div className="flex items-center gap-1 text-green-600 font-bold rounded-lg bg-[#00C950]/10 px-2 py-1">
+
+            <div className="w-fit flex items-center gap-1 text-green-600 font-bold rounded-lg bg-[#00C950]/10 px-2 py-1">
               <div className="bg-white border-2 border-[#00C950] rounded-full">
                 <Check size={16} />
               </div>
               Verified
             </div>
           </div>
-          <div className="w-[30%] flex justify-end">
+          <div className="flex justify-end w-[30%]">
             <button className="bg-[#00C950] text-white px-4 py-2 rounded-md hover:bg-[#00A840]/20 cursor-pointer">
               Change
             </button>
@@ -190,14 +196,14 @@ function CreatePrice() {
           </div>
           <div className="border-b-2 border-gray-200 py-4 flex flex-col gap-2">
             <h3 className="font-bold text-[20px]">Price (₦)</h3>
-            <div className="flex items-center gap-2">
+            <div className="w-full flex items-center gap-2">
               <div className="font-bold text-[16px] bg-gray-200 text-gray-400 rounded-lg px-4 py-2">
                 ₦
               </div>
               <input
                 type="number"
                 placeholder="Enter price"
-                className="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-[#00C950]"
+                className="w-[60%] border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-[#00C950] sm:w-[40%]"
               />
             </div>
             <p className="text-gray-600 text-sm">
