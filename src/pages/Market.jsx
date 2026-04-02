@@ -7,12 +7,12 @@ import SearchContainer from "../components/Search";
 
 function Market() {
   return (
-    <div className="flex h-screen">
+    <div className="flex min-h-screen">
       {/* Sidebar Navigation */}
       <Navigation />
 
       {/* Main Content */}
-      <div className="flex flex-1 flex-col gap-4 p-2 lg:p-4 md:ml-64">
+      <div className="flex flex-1 flex-col gap-4 p-2 lg:p-4 md:ml-64 lg:h-screen">
         {/* Header */}
         <div className="flex flex-col items-start justify-between xl:items-center xl:flex-row">
           <div>
@@ -34,11 +34,15 @@ function Market() {
           </div>
         </div>
         {/* Market Section */}
-        <div className="flex-1 flex-col flex gap-4 lg:flex-row">
+        <div className="flex-1 flex flex-col gap-8 lg:flex-row lg:gap-4 min-h-0">
           {/* Map */}
-          <MarketMap />
+          <div className="h-87.5 shrink-0 lg:h-full lg:flex-1">
+            <MarketMap />
+          </div>
           {/* Sidebar */}
-          <NearByMarkets />
+          <div className="flex-1 min-h-0 lg:h-full lg:flex-1">
+            <NearByMarkets />
+          </div>
         </div>
       </div>
     </div>
