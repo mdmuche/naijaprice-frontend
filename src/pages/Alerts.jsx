@@ -11,7 +11,7 @@ function Alerts() {
 
       <div className="w-full flex flex-col gap-4 p-4 md:ml-64">
         {/* Header */}
-        <div className="w-full flex justify-between items-center">
+        <div className="w-full flex flex-col gap-2 items-start justify-between lg:items-center lg:flex-row lg:gap-0">
           <div>
             <h1 className="text-2xl font-bold">Market</h1>
             <p className="text-gray-600 text-sm">

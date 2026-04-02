@@ -23,7 +23,7 @@ function AlertCard({ alertDesc, status, timeAgo }) {
 
   return (
     <div className="flex flex-col gap-4 p-1 sm:p-4 rounded-lg bg-white shadow-md">
-      <div className="flex justify-between items-center gap-4">
+      <div className="flex flex-col justify-between items-start lg:items-center gap-4 lg:flex-row">
         <div className="flex items-center gap-2">
           <div
             className={`rounded-full p-3 ${status === "anomally" ? "bg-yellow-400 text-black" : status === "rise" ? "bg-red-500 text-white" : status === "drop" ? "bg-[#00C950] text-white" : status === "best" ? "bg-green-900 text-white" : null}`}
@@ -49,7 +49,9 @@ function AlertCard({ alertDesc, status, timeAgo }) {
               <div>no alert</div>
             )}
           </div>
-          <div>{alertDesc}</div>
+          <div className="text-[14px] lg:text-[16px] lg:font-normal">
+            {alertDesc}
+          </div>
         </div>
 
         <div>
@@ -89,7 +91,7 @@ function AlertCard({ alertDesc, status, timeAgo }) {
       </div>
       {status === "anomally" && (
         <div>
-          <div className="flex items-center justify-between mt-2">
+          <div className="flex flex-col items-start gap-2 lg:gap-0 lg:items-center justify-between mt-2 lg:flex-row">
             {/* Bar Container */}
             <div className="w-[78%] h-4 bg-gray-200 rounded-lg overflow-hidden">
               {/* Progress */}
