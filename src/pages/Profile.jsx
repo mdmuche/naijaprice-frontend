@@ -6,9 +6,9 @@ import RecentPriceCard from "../components/RecentPriceCard";
 
 function Profile() {
   const statusbar = [
-    { title: "Price Submitted", value: 87 },
-    { title: "Verified", value: 64 },
-    { title: "Accuracy", value: 92 + "%" },
+    { title: "Price Submitted", value: 87, center: false },
+    { title: "Verified", value: 64, center: false },
+    { title: "Accuracy", value: 92 + "%", center: true },
   ];
   const recentPriceSubmissions = [
     {
@@ -80,15 +80,19 @@ function Profile() {
             </div>
           </div>
         </div>
-        <div className="w-full flex justify-between items-center p-4">
-          <div className="w-[60%] flex flex-col gap-4">
-            <div className="w-full border-2 border-gray-200 rounded-lg bg-white shadow-md p-4">
+        <div className="w-full flex flex-col items-start gap-4 p-2 lg:justify-between lg:items-center lg:flex-row lg:p-4">
+          <div className="w-full lg:w-[60%] flex flex-col gap-4">
+            <div className="w-full border-2 p-2 border-gray-200 rounded-lg bg-white shadow-md lg:p-4">
               <h3 className="text-lg font-bold text-start">
                 Contribution Stats
               </h3>
-              <div className="flex justify-between items-center">
+              <div className="flex flex-wrap gap-2 justify-between items-start sm:items-center sm:flex-nowarp">
                 {statusbar.map((stat) => (
-                  <ContributionCard key={stat.title} stat={stat} />
+                  <ContributionCard
+                    key={stat.title}
+                    stat={stat}
+                    center={stat.center}
+                  />
                 ))}
               </div>
             </div>
@@ -104,7 +108,9 @@ function Profile() {
               </div>
             </div>
           </div>
-          <Settings className={"w-[38%] rounded-lg bg-white shadow-md"} />
+          <Settings
+            className={"w-full lg:w-[38%] rounded-lg bg-white shadow-md"}
+          />
         </div>
       </div>
     </div>

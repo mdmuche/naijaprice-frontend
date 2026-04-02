@@ -2,15 +2,15 @@ import { Box, Check, Clock, X } from "lucide-react";
 
 function RecentPriceCard({ title, snippet, price, date, status }) {
   return (
-    <div className="w-full flex items-center justify-between mt-4">
-      <div className="w-[40%] flex items-center gap-2">
+    <div className="w-full flex flex-col gap-2 items-start border-2 p-2 rounded-lg border-gray-200 sm:flex-row sm:items-center sm:justify-between mt-4 sm:border-0 sm:p-0 sm:rounded-none">
+      <div className="w-full sm:w-[40%] flex items-start justify-between sm:items-center sm:gap-2">
         <Box size={16} />
         <div>
-          <h3 className="text-lg font-bold">{title}</h3>
+          <h3 className="text-lg font-bold text-end">{title}</h3>
           <p className="text-gray-600 text-[14px]">{snippet}</p>
         </div>
       </div>
-      <div className="w-[40%] flex justify-between items-center">
+      <div className="w-full sm:w-[40%] flex justify-between items-center">
         <div className="flex justify-between items-center mt-2">
           <span className="text-lg font-bold">₦{price.toLocaleString()}</span>
         </div>
