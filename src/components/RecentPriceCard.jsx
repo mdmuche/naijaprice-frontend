@@ -2,7 +2,7 @@ import { Box, Check, Clock, X } from "lucide-react";
 
 function RecentPriceCard({ title, snippet, price, date, status }) {
   return (
-    <div className="w-full flex flex-col gap-2 items-start border-2 p-2 rounded-lg border-gray-200 sm:flex-row sm:items-center sm:justify-between mt-4 sm:border-0 sm:p-0 sm:rounded-none">
+    <div className="w-full flex flex-col gap-2 items-start p-2 shadow-md border-gray-200 sm:flex-row sm:items-center sm:justify-between mt-4 sm:shadow-none sm:p-0">
       <div className="w-full sm:w-[40%] flex items-start justify-between sm:items-center sm:gap-2">
         <Box size={16} />
         <div>

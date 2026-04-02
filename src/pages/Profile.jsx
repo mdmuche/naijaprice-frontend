@@ -67,7 +67,7 @@ function Profile() {
           <p className="text-white flex items-center gap-2 font-normal">
             📍 Minna, Niger State
           </p>
-          <div className="flex items-center gap-4 text-white">
+          <div className="flex flex-col items-center gap-4 text-white sm:flex-row">
             <div className="flex items-center gap-2 rounded-lg bg-[#00A840]/20 px-2 py-1">
               <Trophy className="text-yellow-500" size={16} />
               1250 Rep Points
@@ -96,7 +96,7 @@ function Profile() {
                 ))}
               </div>
             </div>
-            <div className="w-full border-2 border-gray-200 rounded-lg bg-white shadow-md p-4">
+            <div className="w-full flex flex-col gap-2 border-2 border-gray-200 rounded-lg bg-white shadow-md p-4">
               <h3 className="text-lg font-bold text-start">My Activity</h3>
               <p className="text-gray-600 text-[14px]">
                 Recent Price Submissions

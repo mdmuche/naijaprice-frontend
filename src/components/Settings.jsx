@@ -44,7 +44,7 @@ function Settings({ className }) {
   ];
   return (
     <div
-      className={`${className} flex flex-col gap-10 border-2 border-gray-200 p-4`}
+      className={`${className} flex flex-col p-2 gap-10 border-2 border-gray-200 sm:p-4`}
     >
       <h3>Settings</h3>
       {settingsList.map((item) => (
