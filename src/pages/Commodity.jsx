@@ -12,10 +12,10 @@ function Commodity() {
   return (
     <div className="flex h-screen">
       <Navigation />
-      <div className="flex-1 flex flex-col gap-4 p-4 md:ml-64">
+      <div className="flex-1 flex flex-col gap-4 p-2 sm:p-4 md:ml-64">
         {commodityData ? (
           <>
-            <div className="flex items-center justify-between gap-4 mb-2 p-4 text-sm">
+            <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4 mb-2 p-4 text-sm">
               <div className="flex items-center gap-2">
                 <ArrowLeft size={16} className="text-black" />
                 <p>
@@ -25,7 +25,9 @@ function Commodity() {
                   <span className="font-semibold">Tomatoes (Big Basket)</span>
                 </p>
               </div>
-              <BtnSecondary icon={<Share2 size={16} />} text="Share" />
+              <div>
+                <BtnSecondary icon={<Share2 size={16} />} text="Share" />
+              </div>
             </div>
             <div className="flex flex-col items-center p-4">
               {commodities
@@ -71,7 +73,10 @@ function Commodity() {
                   </div>
                 ))}
             </div>
-            <div className="flex justify-between">
+            <div
+              className="flex flex-col gap-2 xl:flex-row xl:justify-between
+            "
+            >
               <PriceHistory />
               <PricePerMarketList />
             </div>

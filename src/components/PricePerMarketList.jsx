@@ -34,7 +34,7 @@ function PricePerMarketList() {
     },
   ];
   return (
-    <div className="w-[38%]">
+    <div className="w-full xl:w-[38%]">
       <div className="w-full flex items-center justify-between">
         <h3>Price per Market</h3>
         <div className="text-[#00C950] bg-gray-200 py-2 px-3 cursor-pointer rounded-lg">
@@ -43,16 +43,7 @@ function PricePerMarketList() {
       </div>
       <div>
         {pricePerMarketList.map((pricePerMarket) => (
-          <PricePerMarketCard
-            key={pricePerMarket.id}
-            market={pricePerMarket.market}
-            location={pricePerMarket.location}
-            price={pricePerMarket.price}
-            status={pricePerMarket.status}
-            timeAgo={pricePerMarket.timeAgo}
-            trendDirection={pricePerMarket.trendDirection}
-            trendValue={pricePerMarket.trendValue}
-          />
+          <PricePerMarketCard key={pricePerMarket.id} {...pricePerMarket} />
         ))}
       </div>
     </div>

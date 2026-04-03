@@ -2,9 +2,9 @@ import CommodityTrendChart from "./CommodityTrendChart";
 
 function PriceHistory() {
   return (
-    <div className="w-[60%]">
+    <div className="w-full xl:w-[60%]">
       <div className="w-full flex justify-end">
-        <div className="w-[30%] grid grid-cols-3 gap-2">
+        <div className="w-[70%] mb-2 sm:w-[30%] grid grid-cols-3 gap-2">
           <div className="text-center py-2 border border-gray-300 rounded-2xl bg-white shadow-md">
             7D
           </div>
