@@ -56,7 +56,7 @@ function Profile() {
     <div className="flex h-screen">
       <Navigation />
 
-      <div className="w-full flex flex-col gap-4 md:ml-64">
+      <div className="w-full flex flex-col gap-4 mt-14 lg:mt-0 md:ml-64">
         <div className="w-full bg-linear-to-r from-[#00C950] to-[#064e3b] p-4 flex flex-col items-center justify-center">
           <img
             src="/images/profile-dp.svg"

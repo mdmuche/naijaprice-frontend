@@ -12,7 +12,7 @@ function Market() {
       <Navigation />
 
       {/* Main Content */}
-      <div className="flex flex-1 flex-col gap-4 p-2 lg:p-4 md:ml-64 lg:h-screen">
+      <div className="flex flex-1 flex-col gap-4 p-2 mt-4 z-0 lg:mt-0 lg:p-4 md:ml-64 lg:h-screen">
         {/* Header */}
         <div className="flex flex-col items-start justify-between xl:items-center xl:flex-row">
           <div>

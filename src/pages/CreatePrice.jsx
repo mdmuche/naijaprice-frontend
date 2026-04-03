@@ -33,7 +33,7 @@ function CreatePrice() {
   return (
     <div className="flex h-screen">
       <Navigation />
-      <div className="w-full flex flex-col gap-4 p-2 lg:p-4 md:ml-64">
+      <div className="w-full flex flex-col gap-4 p-2 mt-4 lg:mt-0 lg:p-4 md:ml-64">
         {/* Header */}
         <div className="w-full mx-auto flex items-center">
           <div>

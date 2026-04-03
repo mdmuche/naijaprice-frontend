@@ -9,7 +9,7 @@ function Alerts() {
     <div className="flex h-screen">
       <Navigation />
 
-      <div className="w-full flex flex-col gap-4 p-4 md:ml-64">
+      <div className="w-full flex flex-col gap-4 p-4 mt-4 lg:mt-0 md:ml-64">
         {/* Header */}
         <div className="w-full flex flex-col gap-2 items-start justify-between lg:items-center lg:flex-row lg:gap-0">
           <div>

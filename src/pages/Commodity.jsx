@@ -15,7 +15,7 @@ function Commodity() {
       <div className="flex-1 flex flex-col gap-4 p-2 sm:p-4 md:ml-64">
         {commodityData ? (
           <>
-            <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4 mb-2 p-4 text-sm">
+            <div className="flex flex-col items-start gap-2 mt-4 lg:mt-0 sm:flex-row sm:items-center sm:justify-between sm:gap-4 mb-2 p-4 text-sm">
               <div className="flex items-center gap-2">
                 <ArrowLeft size={16} className="text-black" />
                 <p>

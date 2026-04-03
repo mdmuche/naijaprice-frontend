@@ -25,7 +25,7 @@ function Prices() {
   return (
     <div className="flex h-screen justify-between">
       <Navigation />
-      <div className="flex-1 flex flex-col gap-4 p-1 md:ml-64 md:p-4 sm:p-2">
+      <div className="flex-1 flex flex-col gap-4 p-1 mt-4 lg:mt-0 md:ml-64 md:p-4 sm:p-2">
         <div className="flex flex-col items-start justify-between gap-4 mb-2 p-4 text-xs lg:text-sm lg:flex-row lg:items-center">
           <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center">
             <MapPin size={16} className="text-[#00C950] text-sm" />
