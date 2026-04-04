@@ -3,11 +3,13 @@ import { timeAgo } from "../utils/timeAgo";
 import { Link } from "react-router-dom";
 
 function CommodityCard({ item }) {
-  const isUp = item.trendDirection === "up";
+  // Logic: In a market, Price UP is usually Red, Price DOWN is Green
+  const isPriceRising = item.trendDirection === "up";
+
   return (
     <Link
       to={`/commodities/${item.id}`}
-      className="relative bg-white rounded-lg shadow-md p-2 lg:p-4"
+      className="relative bg-white rounded-lg shadow-md p-2 lg:p-4 transition-transform hover:scale-[1.02]"
     >
       {/* Image */}
       <img
@@ -16,47 +18,58 @@ function CommodityCard({ item }) {
         className="w-full h-36 object-cover rounded-lg"
       />
 
-      {/* Source */}
+      {/* Source Badge - Absolute Positioned */}
       <span className="text-xs">
         {item.source === "verified" ? (
-          <div className="absolute top-6 right-8 flex items-center gap-1 text-white bg-green-600 px-2 py-1 rounded-lg">
+          <div className="absolute top-6 right-8 flex items-center gap-1 text-white bg-green-600 px-2 py-1 rounded-lg shadow-sm">
             <CircleCheck size={14} />
             <div className="hidden lg:block">Verified</div>
           </div>
         ) : (
-          <div className="absolute top-6 right-8 flex items-center gap-1 text-black bg-white px-2 py-1 rounded-lg">
+          <div className="absolute top-6 right-8 flex items-center gap-1 text-black bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg shadow-sm border border-gray-200">
             <Users size={14} />
             <div className="hidden lg:block">Crowdsourced</div>
           </div>
         )}
       </span>
-      {/* Meta */}
+
+      {/* Meta Information */}
       <div className="flex items-center justify-between mt-2 w-full">
         <div className="flex flex-col justify-between items-center w-full lg:flex-row">
           <div>
             {/* Title */}
-            <h3 className="text-lg text-center font-semibold mt-2 lg:text-start">
+            <h3 className="text-lg text-center font-semibold mt-2 lg:text-start text-gray-900">
               {item.title}
             </h3>
-            {/* Snippet */}
-            <p className=" text-xs font-light text-gray-600">{item.snippet}</p>
+            {/* Snippet (e.g., "50kg Bag") */}
+            <p className="text-xs font-light text-gray-600">{item.snippet}</p>
           </div>
 
-          {/* Trend */}
+          {/* Trend Indicator */}
           <div
             className={`flex items-center gap-1 text-xs font-semibold ${
-              isUp ? "text-green-600" : "text-red-600"
+              isPriceRising ? "text-red-600" : "text-green-600"
             }`}
           >
-            {isUp ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+            {isPriceRising ? (
+              <TrendingUp size={14} />
+            ) : (
+              <TrendingDown size={14} />
+            )}
             {item.trend}%
           </div>
         </div>
       </div>
-      <div className="flex flex-col items-center justify-between mt-1 lg:flex-row">
-        <span className="text-lg font-bold">₦{Math.round(item.price)}</span>
-        {/* Time */}
-        <p className="text-[10px] text-gray-400">{timeAgo(item.createdAt)}</p>
+
+      {/* Price and Timestamp */}
+      <div className="flex flex-col items-center justify-between mt-1 lg:flex-row border-t border-gray-50 pt-2">
+        <span className="text-lg font-bold text-gray-900">
+          ₦{Math.round(item.price).toLocaleString()}
+        </span>
+        {/* Time - using your utility function */}
+        <p className="text-[10px] text-gray-400">
+          {item.createdAt ? timeAgo(item.createdAt) : "Recently"}
+        </p>
       </div>
     </Link>
   );
