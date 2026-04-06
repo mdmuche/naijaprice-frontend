@@ -35,7 +35,7 @@ function MobileNav() {
 
       {/* Dropdown Menu */}
       {open && (
-        <div className="fixed top-16 left-0 right-0 z-40 bg-white border-b shadow-md flex flex-col gap-2 p-4">
+        <div className="fixed top-16 left-0 right-0 z-40 bg-white shadow-md flex flex-col gap-2 p-4">
           <NavLink
             to="/"
             className={navLinkClass}
