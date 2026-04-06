@@ -1,63 +1,31 @@
-import Btn from "./Btn";
+import { useSelector } from "react-redux";
 import NearbyMarketCard from "./NearbyMarketCard";
-
-const list = [
-  {
-    title: "Mile 12 international market",
-    location: "Kosofo LGA, Lagos State",
-    distance: "3.2 km away",
-    reports: "47 reports today",
-    status: "active",
-    timeAgo: "2 min ago",
-  },
-  {
-    title: "Mile 12 international market",
-    location: "Kosofo LGA, Lagos State",
-    distance: "3.2 km away",
-    reports: "47 reports today",
-    status: "active",
-    timeAgo: "2 min ago",
-  },
-  {
-    title: "Mile 12 international market",
-    location: "Kosofo LGA, Lagos State",
-    distance: "3.2 km away",
-    reports: "47 reports today",
-    status: "active",
-    timeAgo: "2 min ago",
-  },
-  {
-    title: "Mile 12 international market",
-    location: "Kosofo LGA, Lagos State",
-    distance: "3.2 km away",
-    reports: "47 reports today",
-    status: "quiet",
-    timeAgo: "2 min ago",
-  },
-  {
-    title: "Mile 12 international market",
-    location: "Kosofo LGA, Lagos State",
-    distance: "3.2 km away",
-    reports: "47 reports today",
-    status: "active",
-    timeAgo: "2 min ago",
-  },
-];
+import Btn from "./Btn";
 
 function NearByMarketList() {
+  const { filteredMarkets, userLocation } = useSelector(
+    (state) => state.markets,
+  );
+
+  if (!userLocation) {
+    return (
+      <div className="p-10 text-center animate-pulse">
+        Detecting your location...
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-4">
-      {list.map((market, index) => (
-        <NearbyMarketCard
-          key={index}
-          title={market.title}
-          location={market.location}
-          distance={market.distance}
-          reports={market.reports}
-          status={market.status}
-          timeAgo={market.timeAgo}
-        />
-      ))}
+      {filteredMarkets.length > 0 ? (
+        filteredMarkets.map((market) => (
+          <NearbyMarketCard key={market.id} {...market} />
+        ))
+      ) : (
+        <p className="text-center text-gray-500 py-10">
+          No markets match your search.
+        </p>
+      )}
       <Btn btnText={"+ Suggest a Market"} />
     </div>
   );

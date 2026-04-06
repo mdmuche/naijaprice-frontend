@@ -6,7 +6,7 @@ function NearbyMarketCard({
   distance,
   status,
   reports,
-  timeAgo,
+  lastUpdated,
 }) {
   return (
     <div
@@ -45,7 +45,7 @@ function NearbyMarketCard({
           <NotebookText size={16} /> {reports}
         </div>
         <div className="flex items-center gap-1">
-          <Clock size={16} /> {timeAgo}
+          <Clock size={16} /> {lastUpdated}
         </div>
       </div>
     </div>
