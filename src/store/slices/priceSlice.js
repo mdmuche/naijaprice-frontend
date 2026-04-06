@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, current } from "@reduxjs/toolkit";
 import { commoditiesData } from "../../utils/CommoditiesData";
 
 /**
@@ -71,6 +71,12 @@ const priceSlice = createSlice({
         action.payload.market,
       );
     },
+    addPriceReport: (state, action) => {
+      // unshift adds it to the very beginning of the array
+      // so it shows up as the "Latest" report
+      state.commodities.unshift(action.payload);
+      console.log(current(state.commodities));
+    },
     setTrendTimeframe: (state, action) => {
       state.trendTimeframe = action.payload;
     },
@@ -84,6 +90,7 @@ export const {
   setFilterSource,
   setLocation,
   setTrendTimeframe,
+  addPriceReport,
 } = priceSlice.actions;
 
 export default priceSlice.reducer;

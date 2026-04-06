@@ -7,268 +7,453 @@ import {
   Send,
   Star,
   TriangleAlert,
+  X,
+  ChevronRight,
+  Search as SearchIcon,
 } from "lucide-react";
 import Navigation from "../components/Navigation";
 import Search from "../components/Search";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
+import { allMarketsData } from "../utils/marketData";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { addPriceReport } from "../store/slices/priceSlice";
 
 function CreatePrice() {
+  // --- REDUX & ROUTING ---
+  const commodities = useSelector((state) => state.prices.commodities);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // --- UI & ANIMATION STATES ---
+  const [isChanging, setIsChanging] = useState(false);
+  const [gpsError, setGpsError] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // --- FORM DATA STATES ---
+  const [selectedMarket, setSelectedMarket] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState("Vegetables");
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [price, setPrice] = useState("");
+  const [unit, setUnit] = useState("Bag");
   const [preview, setPreview] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
   const fileInputRef = useRef();
-  const handleFileClick = () => {
-    fileInputRef.current.click();
-  };
+  // const scrollRef = useRef();
+
+  // --- 1. SMART GPS DETECTION LOGIC ---
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+
+          // Haversine-adjacent calculation for closest market
+          let closest = allMarketsData[0];
+          let minDistance = Infinity;
+
+          allMarketsData.forEach((market) => {
+            const dist = Math.sqrt(
+              Math.pow(market.coords[0] - latitude, 2) +
+                Math.pow(market.coords[1] - longitude, 2),
+            );
+            if (dist < minDistance) {
+              minDistance = dist;
+              closest = market;
+            }
+          });
+          setSelectedMarket(closest);
+          setGpsError(false);
+        },
+        (error) => {
+          console.error("GPS Error:", error);
+          setGpsError(true);
+          setSelectedMarket(allMarketsData[0]); // Fallback
+        },
+        { enableHighAccuracy: true, timeout: 5000 },
+      );
+    }
+  }, []);
+
+  // --- 2. DYNAMIC ITEM FILTERING ---
+  const filteredItems = useMemo(() => {
+    return commodities.filter((item) => {
+      const matchesCategory = item.category === selectedCategory;
+      const matchesSearch = item.title
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [selectedCategory, searchQuery, commodities]);
+
+  // --- 3. EVENT HANDLERS ---
+  const handleFileClick = () => fileInputRef.current.click();
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    // console.log("Selected file:", file);
-    // Handle file change logic here
-    setPreview(URL.createObjectURL(file));
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File is too large. Max 5MB.");
+        return;
+      }
+      setPreview(URL.createObjectURL(file));
+    }
   };
+
+  const handleSubmit = () => {
+    if (!selectedItem || !price || !selectedMarket)
+      return alert("Missing fields");
+
+    // 1. Calculate Trend by comparing to the existing Redux state
+    const previousReport = commodities.find(
+      (c) =>
+        c.title === selectedItem.title && c.market === selectedMarket.title,
+    );
+
+    let trendPercentage = 0;
+    let trendDir = "neutral";
+
+    if (previousReport && previousReport.price > 0) {
+      const oldPrice = previousReport.price;
+      const newPrice = Number(price);
+
+      // Calculate percentage: ((New - Old) / Old) * 100
+      trendPercentage = ((newPrice - oldPrice) / oldPrice) * 100;
+      trendPercentage = parseFloat(trendPercentage.toFixed(1)); // e.g. 5.2
+
+      if (newPrice > oldPrice) trendDir = "up";
+      else if (newPrice < oldPrice) trendDir = "down";
+    }
+
+    // 2. Construct the object to match your CommodityCard requirements
+    const reportData = {
+      id: `rep-${Date.now()}`,
+      title: selectedItem.title,
+      category: selectedCategory,
+      market: selectedMarket.title,
+      price: Number(price),
+      // CRITICAL: Card uses 'snippet' for the subtitle (e.g., "1 Bag")
+      snippet: `${unit}`,
+      // CRITICAL: Use the path from the selected item if no new photo was taken
+      image: preview || selectedItem.image || "/images/default-food.svg",
+      source: "crowdsourced",
+      createdAt: new Date().toISOString(),
+      trend: Math.abs(trendPercentage), // Card expects a positive number for display
+      trendDirection: trendDir,
+    };
+    setIsSubmitting(true);
+    dispatch(addPriceReport(reportData));
+    setTimeout(() => {
+      navigate("/");
+    }, 2000);
+  };
+
+  // --- 4. REUSABLE STYLES ---
   const navLinkClass = ({ isActive, rounded }) =>
-    `flex items-center gap-2 text-[16px] p-2.5 w-fit ${rounded} transition-colors cursor-pointer ${
+    `flex items-center gap-2 text-[16px] p-2.5 w-fit ${rounded} transition-all duration-200 cursor-pointer ${
       isActive
-        ? "text-white bg-[#00C950] font-semibold"
-        : "text-gray-600 hover:bg-gray-200"
+        ? "text-white bg-[#00C950] font-semibold shadow-md shadow-green-100"
+        : "text-gray-600 hover:bg-gray-100 active:scale-95"
     }`;
+
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen overflow-hidden bg-gray-50">
       <Navigation />
-      <div className="w-full flex flex-col gap-4 p-2 mt-4 lg:mt-0 lg:p-4 md:ml-64">
-        {/* Header */}
-        <div className="w-full mx-auto flex items-center">
-          <div>
-            <h1 className="text-2xl font-bold text-start">Add Price Report</h1>
-            <p className="text-gray-600 text-sm text-start">
-              Submit current market prices to help the community
-            </p>
-          </div>
-        </div>
-        <div className="w-full mx-auto flex gap-2 flex-col items-start rounded-lg bg-[#00C950]/10 shadow-md p-4 sm:flex-row sm:gap-0">
-          <div className="w-full flex flex-col lg:items-start gap-4 lg:w-[70%] lg:flex-row">
-            <div className="flex flex-col gap-2 items-start">
-              <div className="flex gap-2 items-center">
-                <div className="rounded-full bg-[#00C950]/20 p-3">
-                  <MapPin size={16} />
-                </div>
-                <h3 className="font-bold lg:text-[20px]">
-                  Detected Mile 12 Market Lagos
+
+      <div className="w-full flex flex-col gap-4 p-2 mt-4 lg:mt-0 lg:p-6 md:ml-64 overflow-y-auto ">
+        {/* HEADER SECTION */}
+        <header className="w-full mb-2">
+          <h1 className="text-2xl font-bold text-gray-800">Add Price Report</h1>
+          <p className="text-gray-500 text-sm">
+            Help {selectedMarket?.title || "the community"} stay updated with
+            accurate prices
+          </p>
+        </header>
+
+        {/* MARKET LOCATION CARD */}
+        <section className="relative w-full flex flex-col gap-3 rounded-xl bg-[#00C950]/5 border border-[#00C950]/20 shadow-sm p-4 sm:flex-row sm:items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="rounded-full bg-[#00C950] p-3 text-white">
+              <MapPin size={20} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="font-bold text-gray-800 text-lg">
+                  {selectedMarket
+                    ? selectedMarket.title
+                    : "Detecting Market..."}
                 </h3>
+                {selectedMarket && (
+                  <span className="flex items-center gap-1 text-[10px] bg-white text-[#00C950] px-2 py-0.5 rounded-full border border-[#00C950]">
+                    <Check size={10} /> Verified
+                  </span>
+                )}
+              </div>
+              <p className="text-gray-500 text-xs">
+                {selectedMarket?.location || "Fetching GPS coordinates..."}
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={() => setIsChanging(!isChanging)}
+            className="text-[#00C950] font-semibold text-sm hover:underline px-4 py-2 rounded-lg bg-white border border-[#00C950]/20 transition-all"
+          >
+            {isChanging ? "Cancel" : "Change Market"}
+          </button>
+
+          {/* MARKET SELECTOR OVERLAY */}
+          {isChanging && (
+            <div className="absolute top-full left-0 w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-2xl z-[100] p-2 animate-in fade-in slide-in-from-top-2">
+              <div className="p-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                Nearby Markets
+              </div>
+              <div className="max-h-60 overflow-y-auto">
+                {allMarketsData.map((m) => (
+                  <div
+                    key={m.id}
+                    onClick={() => {
+                      setSelectedMarket(m);
+                      setIsChanging(false);
+                    }}
+                    className="flex items-center justify-between p-3 hover:bg-[#00C950]/5 rounded-lg cursor-pointer group"
+                  >
+                    <div>
+                      <p className="font-bold text-gray-700 group-hover:text-[#00C950]">
+                        {m.title}
+                      </p>
+                      <p className="text-xs text-gray-400">{m.location}</p>
+                    </div>
+                    <ChevronRight size={16} className="text-gray-300" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
+
+        {/* GPS ALERT */}
+        {gpsError && (
+          <div className="w-full flex items-center gap-4 rounded-xl bg-amber-50 border border-amber-200 p-4 animate-pulse">
+            <div className="rounded-full bg-amber-100 p-2 text-amber-600">
+              <TriangleAlert size={20} />
+            </div>
+            <div>
+              <h3 className="font-bold text-amber-800">Weak GPS Signal</h3>
+              <p className="text-xs text-amber-700">
+                Please confirm your market manually to ensure accuracy.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* MAIN FORM CONTAINER */}
+        <main className="w-full flex flex-col gap-6 border border-gray-200 rounded-2xl bg-white shadow-sm p-4 lg:p-6">
+          {/* ITEM SELECTION FLOW */}
+          <div className="space-y-4">
+            <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+              <div className="w-1.5 h-6 bg-[#00C950] rounded-full" />
+              1. Select Item
+            </h3>
+
+            <div className="relative">
+              <SearchIcon
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                size={18}
+              />
+              <input
+                type="text"
+                placeholder="Search items (e.g. Beans)"
+                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#00C950] focus:border-transparent outline-none transition-all"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+
+            {/* CATEGORY TABS */}
+            <div className="overflow-x-auto pb-2 custom-scrollbar">
+              <ul className="flex gap-2 min-w-max">
+                {["Vegetables", "Grains", "Tubers", "Protein", "Oil"].map(
+                  (cat) => (
+                    <li
+                      key={cat}
+                      onClick={() => {
+                        setSelectedCategory(cat);
+                        setSelectedItem(null);
+                      }}
+                      className={navLinkClass({
+                        isActive: selectedCategory === cat,
+                        rounded: "rounded-full px-6",
+                      })}
+                    >
+                      {cat}
+                    </li>
+                  ),
+                )}
+              </ul>
+            </div>
+
+            {/* DYNAMIC ITEM GRID */}
+            <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+              <p className="text-xs font-semibold text-gray-400 mb-3 uppercase tracking-widest">
+                Available in {selectedCategory} ({filteredItems.length})
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 max-h-56 overflow-y-auto pr-2 custom-scrollbar">
+                {filteredItems.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => setSelectedItem(item)}
+                    className={`flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all duration-200 ${
+                      selectedItem?.id === item.id
+                        ? "bg-white border-[#00C950] shadow-md scale-[1.02]"
+                        : "bg-white border-transparent hover:border-gray-200 text-gray-600"
+                    }`}
+                  >
+                    <span
+                      className={`text-sm font-medium ${selectedItem?.id === item.id ? "text-[#00C950]" : ""}`}
+                    >
+                      {item.title}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-4 border-t border-gray-100">
+            {/* MEASUREMENT & PRICE */}
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-bold text-gray-800 mb-4">
+                  2. Measure Unit
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    "Bag",
+                    "Basket",
+                    "Paint Bucket",
+                    "Mudu",
+                    "Derica",
+                    "KG",
+                  ].map((u) => (
+                    <button
+                      key={u}
+                      onClick={() => setUnit(u)}
+                      className={`px-4 py-2 rounded-lg border-2 transition-all text-sm font-semibold ${
+                        unit === u
+                          ? "bg-[#00C950]/10 border-[#00C950] text-[#00C950]"
+                          : "bg-white border-gray-100 text-gray-500 hover:border-gray-200"
+                      }`}
+                    >
+                      {u}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div>
-                <p className="text-gray-600 text-sm">
-                  GPS auto-detected location
+                <h3 className="text-lg font-bold text-gray-800 mb-4">
+                  3. Current Price
+                </h3>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center w-14 h-14 bg-gray-100 rounded-xl text-gray-400 font-bold text-xl">
+                    ₦
+                  </div>
+                  <input
+                    type="number"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    placeholder="0.00"
+                    className="flex-1 h-14 text-2xl font-bold border-b-2 border-gray-100 focus:border-[#00C950] outline-none transition-all placeholder:text-gray-200"
+                  />
+                </div>
+                <p className="text-xs text-gray-400 mt-2 italic">
+                  Enter the price per {unit} today.
                 </p>
               </div>
             </div>
 
-            <div className="w-fit flex items-center gap-1 text-green-600 font-bold rounded-lg bg-[#00C950]/10 px-2 py-1">
-              <div className="bg-white border-2 border-[#00C950] rounded-full">
-                <Check size={16} />
-              </div>
-              Verified
-            </div>
-          </div>
-          <div className="flex justify-end w-[30%]">
-            <button className="bg-[#00C950] text-white px-4 py-2 rounded-md hover:bg-[#00A840]/20 cursor-pointer">
-              Change
-            </button>
-          </div>
-        </div>
-        <div className="w-full mx-auto flex items-center rounded-[5px] bg-yellow-50 shadow-md p-4">
-          <div className="w-full flex items-center gap-4">
-            <div className="rounded-full bg-yellow-200 p-3">
-              <TriangleAlert className="text-yellow-500" size={16} />
-            </div>
-
-            <div>
-              <h3 className="font-bold text-[20px] text-yellow-600">
-                Low Confidence - GPS Signal weak
-              </h3>
-              <p className="text-sm text-yellow-400">
-                Please verify your market location manually if needed
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="w-full mx-auto flex flex-col gap-2 border-2 border-gray-200 rounded-lg bg-white shadow-md p-4">
-          <h3 className="font-bold text-[20px]">Select Item</h3>
-          <Search placeholder={"Tomatoes (Big Basket)"} angle={true} />
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b-2 border-gray-200 py-4">
-            <ul className="flex flex-wrap gap-2">
-              <h4 className="p-2.5 text-gray-600 text-[18px]">Categories:</h4>
-              <li
-                className={navLinkClass({
-                  isActive: true,
-                  rounded: "rounded-3xl",
-                })}
-              >
-                Vegetables
-              </li>
-              <li
-                className={navLinkClass({
-                  isActive: false,
-                  rounded: "rounded-3xl",
-                })}
-              >
-                Grains
-              </li>
-              <li
-                className={navLinkClass({
-                  isActive: false,
-                  rounded: "rounded-3xl",
-                })}
-              >
-                Tubers
-              </li>
-              <li
-                className={navLinkClass({
-                  isActive: false,
-                  rounded: "rounded-3xl",
-                })}
-              >
-                Protein
-              </li>
-              <li
-                className={navLinkClass({
-                  isActive: false,
-                  rounded: "rounded-3xl",
-                })}
-              >
-                Oil
-              </li>
-            </ul>
-          </div>
-          <div className="border-b-2 border-gray-200 py-4">
-            <h3 className="font-bold text-[20px]">Measure Unit</h3>
-            <div className="flex flex-wrap items-center justify-between gap-4 border-b-2 border-gray-200 py-4">
-              <ul className="flex flex-wrap gap-2">
-                <li
-                  className={navLinkClass({
-                    isActive: true,
-                    rounded: "rounded-lg",
-                  })}
-                >
-                  Bag
-                </li>
-                <li
-                  className={navLinkClass({
-                    isActive: false,
-                    rounded: "rounded-lg",
-                  })}
-                >
-                  Basket
-                </li>
-                <li
-                  className={navLinkClass({
-                    isActive: false,
-                    rounded: "rounded-lg",
-                  })}
-                >
-                  Pain Bucket
-                </li>
-                <li
-                  className={navLinkClass({
-                    isActive: false,
-                    rounded: "rounded-lg",
-                  })}
-                >
-                  Mudu
-                </li>
-                <li
-                  className={navLinkClass({
-                    isActive: false,
-                    rounded: "rounded-lg",
-                  })}
-                >
-                  Derica
-                </li>
-                <li
-                  className={navLinkClass({
-                    isActive: false,
-                    rounded: "rounded-lg",
-                  })}
-                >
-                  KG
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-b-2 border-gray-200 py-4 flex flex-col gap-2">
-            <h3 className="font-bold text-[20px]">Price (₦)</h3>
-            <div className="w-full flex items-center gap-2">
-              <div className="font-bold text-[16px] bg-gray-200 text-gray-400 rounded-lg px-4 py-2">
-                ₦
-              </div>
+            {/* PHOTO UPLOAD */}
+            <div className="bg-gray-50 rounded-2xl p-6 border-2 border-dashed border-gray-200 flex flex-col items-center justify-center min-h-[200px] relative overflow-hidden group">
+              {preview ? (
+                <div className="absolute inset-0">
+                  <img
+                    src={preview}
+                    className="w-full h-full object-cover"
+                    alt="Preview"
+                  />
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={() => setPreview(null)}
+                      className="bg-white/20 backdrop-blur-md p-2 rounded-full text-white hover:bg-red-500"
+                    >
+                      <X size={24} />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div
+                    onClick={handleFileClick}
+                    className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm text-gray-400 group-hover:text-[#00C950] group-hover:scale-110 transition-all cursor-pointer mb-4"
+                  >
+                    <Camera size={32} />
+                  </div>
+                  <p className="text-sm font-bold text-gray-700">
+                    Add Photo Proof
+                  </p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Earn +10 bonus reputation points
+                  </p>
+                </>
+              )}
               <input
-                type="number"
-                placeholder="Enter price"
-                className="w-[60%] border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-[#00C950] sm:w-[40%]"
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                className="hidden"
+                accept="image/*"
               />
             </div>
-            <p className="text-gray-600 text-sm">
-              Enter the current price per unit at this market
-            </p>
           </div>
-          <div>
-            <h3 className="font-bold text-[20px]">Photo (Optional)</h3>
-            <div
-              onClick={handleFileClick}
-              className="w-fit border-2 border-dashed border-gray-300 bg-gray-200 rounded-full p-3 cursor-pointer flex items-center mt-8 mx-auto"
-            >
-              <Camera size={16} />
-            </div>
-            <input
-              type="file"
-              name="photo"
-              id="photo"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              accept="image/png, image/jpeg"
-              className="hidden"
-            />
-            <p className="text-gray-600 text-sm text-center mt-2">
-              Click to add a photo
-            </p>
-            <p className="text-gray-600 text-sm text-center mt-2">
-              JPG, PNG up to 5mb
-            </p>
-            {preview && (
-              <img
-                src={preview}
-                className="w-20 h-20 object-cover mx-auto mt-4 rounded"
-              />
-            )}
-            <div className="flex items-center gap-2 mt-2 rounded-lg p-2 bg-[#00C950]/20 text-[#00C950] w-fit mx-auto cursor-pointer">
-              <Star size={16} />
-              <span className="text-sm flex items-center">
-                <Plus size={16} />
-                10 Reps Points
-              </span>
-            </div>
-          </div>
-        </div>
-        <div className="w-full mx-auto flex items-center rounded-lg bg-[#00C950]/10 shadow-md p-4">
-          <div className="w-full flex items-center gap-4">
-            <div className="rounded-full bg-[#00C950]/20 p-3">
-              <CircleAlert className="text-[#00C950]" size={16} />
-            </div>
+        </main>
 
+        {/* REPUTATION BANNER */}
+        <div className="w-full p-4 rounded-xl bg-gradient-to-r from-[#00C950] to-[#00A840] text-white flex items-center justify-between shadow-lg shadow-green-100">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-white/20 rounded-lg">
+              <Star size={20} />
+            </div>
             <div>
-              <h3 className="font-bold text-[20px]">
-                Your Submission helps the community!
-              </h3>
-              <p className="text-gray-600 text-sm">
-                Accurate reports earn reputation points and helps traders make
-                better decisions
+              <p className="font-bold text-sm">Community Contributor</p>
+              <p className="text-[10px] opacity-80 uppercase tracking-widest">
+                Verify and earn rewards
               </p>
             </div>
           </div>
+          <div className="text-2xl font-black">+10 PTS</div>
         </div>
-        <div className="w-full mx-auto">
-          <button className="w-full bg-[#00C950] text-white px-4 py-2 rounded-md hover:bg-[#00A840]/20 cursor-pointer flex items-center justify-center gap-2">
-            <Send className="inline mr-2" />
-            Submit Price
+
+        {/* FINAL SUBMIT BUTTON */}
+        <div className="w-full">
+          <button
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            className={`w-full h-16 rounded-2xl font-bold text-white flex items-center justify-center gap-3 transition-all shadow-xl shadow-green-200 ${
+              isSubmitting
+                ? "bg-gray-400"
+                : "bg-[#00C950] hover:bg-[#00A840] active:scale-[0.98]"
+            }`}
+          >
+            {isSubmitting ? (
+              <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            ) : (
+              <>
+                <Send size={20} />
+                Confirm & Submit Report
+              </>
+            )}
           </button>
         </div>
       </div>

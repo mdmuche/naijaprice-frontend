@@ -46,18 +46,20 @@ function CommodityCard({ item }) {
           </div>
 
           {/* Trend Indicator */}
-          <div
-            className={`flex items-center gap-1 text-xs font-semibold ${
-              isPriceRising ? "text-red-600" : "text-green-600"
-            }`}
-          >
-            {isPriceRising ? (
-              <TrendingUp size={14} />
-            ) : (
-              <TrendingDown size={14} />
-            )}
-            {item.trend}%
-          </div>
+          {item.trend !== 0 && (
+            <div
+              className={`flex items-center gap-1 text-xs font-semibold ${
+                isPriceRising ? "text-red-600" : "text-green-600"
+              }`}
+            >
+              {isPriceRising ? (
+                <TrendingUp size={14} />
+              ) : (
+                <TrendingDown size={14} />
+              )}
+              {item.trend}%
+            </div>
+          )}
         </div>
       </div>
 

@@ -64,19 +64,31 @@ function Prices() {
   // Logic: Filter and Sort
   const allMarketItems = commodities
     .filter((item) => {
-      const matchesMarket = item.market === currentLocation.market;
+      // 1. Check Market (Case insensitive check is safer)
+      const matchesMarket =
+        item.market?.toLowerCase() === currentLocation.market?.toLowerCase();
+
+      // 2. Check Category
       const matchesCat =
         activeCategory === "All" || item.category === activeCategory;
+
+      // 3. Check Search
       const matchesSearch = item.title
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
+
+      // 4. Check Source
       const matchesSource =
         filterSource === "all" || item.source === filterSource;
+
       return matchesMarket && matchesCat && matchesSearch && matchesSource;
     })
     .sort((a, b) => {
-      if (sortBy === "latest")
-        return new Date(b.createdAt) - new Date(a.createdAt);
+      // 5. Ensure the 'createdAt' actually exists to avoid NaN errors
+      const dateA = a.createdAt ? new Date(a.createdAt) : 0;
+      const dateB = b.createdAt ? new Date(b.createdAt) : 0;
+
+      if (sortBy === "latest") return dateB - dateA;
       return 0;
     });
 
