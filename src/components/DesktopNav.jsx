@@ -1,4 +1,11 @@
-import { Bell, CirclePlus, MapPin, TrendingUp, User } from "lucide-react";
+import {
+  Bell,
+  CirclePlus,
+  MapPin,
+  ShieldCheck,
+  TrendingUp,
+  User,
+} from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 
 function DesktopNav() {
@@ -44,6 +51,12 @@ function DesktopNav() {
           <NavLink to="/profile" className={navLinkClass}>
             <User />
             <span>Profile</span>
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/admin" className={navLinkClass}>
+            <ShieldCheck />
+            <span>Admin</span>
           </NavLink>
         </li>
       </ul>

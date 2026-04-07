@@ -169,6 +169,15 @@ const marketSlice = createSlice({
           })
           .sort((a, b) => a.rawDist - b.rawDist);
       }
+    }, // Action to add a newly approved market
+    approveNewMarket: (state, action) => {
+      // We spread the suggestion and overwrite the status
+      const approvedMarket = {
+        ...action.payload,
+        status: "active",
+        id: state.allMarkets.length + 1,
+      };
+      state.allMarkets.unshift(approvedMarket);
     },
   },
 });
@@ -178,5 +187,6 @@ export const {
   setSearchQuery,
   updateNearbyMarkets,
   setFilterStatus,
+  approveNewMarket,
 } = marketSlice.actions;
 export default marketSlice.reducer;

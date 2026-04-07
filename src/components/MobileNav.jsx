@@ -7,6 +7,7 @@ import {
   User,
   Menu,
   X,
+  ShieldCheck,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
@@ -79,6 +80,15 @@ function MobileNav() {
           >
             <User size={20} />
             Profile
+          </NavLink>
+
+          <NavLink
+            to="/admin"
+            className={navLinkClass}
+            onClick={() => setOpen(false)}
+          >
+            <ShieldCheck size={20} />
+            Admin
           </NavLink>
         </div>
       )}

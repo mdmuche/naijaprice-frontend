@@ -8,6 +8,8 @@ import Market from "./pages/Market";
 
 import "./App.css";
 import Commodity from "./pages/Commodity";
+import SuggestMarket from "./pages/SuggestMarket";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
         <Route path="/alerts" element={<Alerts />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/markets" element={<Market />} />
+        <Route path="/suggest-market" element={<SuggestMarket />} />
+        <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
     </>
   );
