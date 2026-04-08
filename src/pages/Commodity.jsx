@@ -1,14 +1,35 @@
 import { ArrowLeft, Share2, TrendingDown, TrendingUp } from "lucide-react";
 import Navigation from "../components/Navigation";
 import BtnSecondary from "../components/BtnSecondary";
-import { commodities } from "../data";
 import { useParams } from "react-router-dom";
 import PriceHistory from "../components/PriceHistory";
 import PricePerMarketList from "../components/PricePerMarketList";
+import { useState } from "react";
+import { priceHistory } from "../utils/priceHistoryData";
 
 function Commodity() {
   const { id } = useParams();
-  const commodityData = commodities.find((item) => item.id === Number(id));
+  const commodityData = priceHistory.find(
+    (item) => String(item.id) === String(id),
+  );
+  console.log(commodityData);
+
+  // 1. Only store the MARKET in state, not the Title.
+  // The Title is already known from the URL/commodityData.
+  const [activeMarket, setActiveMarket] = useState(
+    commodityData ? commodityData.market : "",
+  );
+
+  // 2. Create a "derived" object to pass to the Graph.
+  // This is NOT state, it's just a variable calculated on every render.
+  const activeItem = {
+    title: commodityData?.title || "",
+    market: activeMarket,
+  };
+  console.log(activeItem);
+
+  // if (!commodityData) return <div>Loading...</div>;
+
   return (
     <div className="flex h-screen">
       <Navigation />
@@ -30,7 +51,7 @@ function Commodity() {
               </div>
             </div>
             <div className="flex flex-col items-center p-4">
-              {commodities
+              {priceHistory
                 .filter((commodity) => commodity.id === Number(id))
                 .map((commodity) => (
                   <div
@@ -56,15 +77,15 @@ function Commodity() {
                       {commodity.snippet}
                     </p>
                     <div
-                      className={`flex items-center gap-2 mt-2 ${commodity.trendDirection === "down" ? "bg-red-100" : "bg-[#00C950]/10"} p-2 rounded-xl`}
+                      className={`flex items-center gap-2 mt-2 ${commodity.trendDirection === "down" ? "bg-[#00C950]/10" : "bg-red-100"} p-2 rounded-xl`}
                     >
                       {commodity.trendDirection === "down" ? (
-                        <TrendingDown size={16} className="text-red-500" />
+                        <TrendingDown size={16} className="text-green-500" />
                       ) : (
-                        <TrendingUp size={16} className="text-green-500" />
+                        <TrendingUp size={16} className="text-red-500" />
                       )}
                       <div
-                        className={`${commodity.trendDirection === "down" ? "text-red-500" : "text-green-500"} text-sm font-bold`}
+                        className={`${commodity.trendDirection === "down" ? "text-green-500" : "text-red-500"} text-sm font-bold`}
                       >
                         <span className="mr-2">{commodity.trend}%</span>
                         vs yesterday
@@ -73,12 +94,16 @@ function Commodity() {
                   </div>
                 ))}
             </div>
-            <div
-              className="flex flex-col gap-2 xl:flex-row xl:justify-between
-            "
-            >
-              <PriceHistory />
-              <PricePerMarketList />
+            <div className="flex flex-col gap-2 xl:flex-row xl:justify-between p-4">
+              <PriceHistory selectedCommodity={activeItem} />
+
+              <PricePerMarketList
+                onMarketSelect={(selection) =>
+                  setActiveMarket(selection.market)
+                }
+                activeMarket={activeMarket}
+                commodityTitle={commodityData.title}
+              />
             </div>
           </>
         ) : (

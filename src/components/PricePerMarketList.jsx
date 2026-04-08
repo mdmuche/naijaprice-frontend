@@ -1,50 +1,43 @@
 import PricePerMarketCard from "./PricePerMarketCard";
+import { priceHistory } from "../utils/priceHistoryData";
+priceHistory.filter((p) => console.log(p.title));
+// .slice(0, 3)
+// .map((item) => console.log(item.market));
 
-function PricePerMarketList() {
-  const pricePerMarketList = [
-    {
-      id: 1,
-      market: "Mile 12 Market",
-      price: 45000,
-      location: "kosofe LGA, Lagos",
-      status: "verified",
-      timeAgo: "2hr ago",
-      trendDirection: "down",
-      trendValue: "4.8",
-    },
-    {
-      id: 2,
-      market: "Epe Market",
-      price: 38500,
-      location: "Epe LGA, Lagos",
-      status: "crowdsourced",
-      timeAgo: "5hr ago",
-      trendDirection: "down",
-      trendValue: "-14",
-    },
-    {
-      id: 3,
-      market: "Jakande Market",
-      price: 48000,
-      location: "Eti-osa LGA, Lagos",
-      status: "verified",
-      timeAgo: "1hr ago",
-      trendDirection: "up",
-      trendValue: "+7",
-    },
-  ];
+function PricePerMarketList({ activeMarket, onMarketSelect, commodityTitle }) {
   return (
     <div className="w-full xl:w-[38%]">
-      <div className="w-full flex items-center justify-between">
-        <h3>Price per Market</h3>
-        <div className="text-[#00C950] bg-gray-200 py-2 px-3 cursor-pointer rounded-lg">
+      <div className="w-full flex items-center justify-between mb-4">
+        <h3 className="font-bold text-gray-800">Price per Market</h3>
+        <button className="text-[#00C950] bg-green-50 py-1 px-3 rounded-lg text-xs font-semibold">
           View All
-        </div>
+        </button>
       </div>
-      <div>
-        {pricePerMarketList.map((pricePerMarket) => (
-          <PricePerMarketCard key={pricePerMarket.id} {...pricePerMarket} />
-        ))}
+
+      <div className="flex flex-col gap-4">
+        {/* Mapping DIRECTLY from your data file */}
+        {priceHistory
+          .filter(
+            (p) =>
+              p.market === activeMarket &&
+              p.title.toLowerCase() === commodityTitle.toLowerCase(),
+          )
+          .slice(0, 3)
+          .map((item) => (
+            <PricePerMarketCard
+              key={item.id}
+              market={item.market}
+              price={item.price}
+              location={item.location}
+              trend={item.trend}
+              trendDirection={item.trendDirection}
+              source={item.source}
+              // Comparison for the active state
+              isActive={activeMarket === item.market}
+              // Function to change the active state
+              onClick={() => onMarketSelect({ market: item.market })}
+            />
+          ))}
       </div>
     </div>
   );
