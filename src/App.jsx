@@ -10,6 +10,12 @@ import "./App.css";
 import Commodity from "./pages/Commodity";
 import SuggestMarket from "./pages/SuggestMarket";
 import AdminDashboard from "./pages/AdminDashboard";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { AdminGuard } from "./components/AdminGuard";
+import Unauthorized from "./pages/Unauthorized";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -17,12 +23,38 @@ function App() {
       <Routes>
         <Route path="/" element={<Prices />} />
         <Route path="/commodities/:id" element={<Commodity />} />
-        <Route path="/add-price" element={<CreatePrice />} />
+
+        <Route
+          path="/add-price"
+          element={
+            <ProtectedRoute>
+              <CreatePrice />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/alerts" element={<Alerts />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/markets" element={<Market />} />
         <Route path="/suggest-market" element={<SuggestMarket />} />
-        <Route path="/admin" element={<AdminDashboard />} />
+        <Route
+          path="/admin"
+          element={
+            <AdminGuard>
+              <AdminDashboard />
+            </AdminGuard>
+          }
+        />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   );

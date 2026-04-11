@@ -10,6 +10,10 @@ const alertsSlice = createSlice({
     addAlert: (state, action) => {
       // Logic: adds new alert to the top of the array
       state.allAlerts.unshift(action.payload);
+      localStorage.setItem(
+        "naijaprice_alerts",
+        JSON.stringify(state.allAlerts),
+      );
     },
   },
 });

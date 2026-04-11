@@ -9,9 +9,14 @@ import { priceHistory } from "../utils/priceHistoryData";
 
 function Commodity() {
   const { id } = useParams();
-  const commodityData = priceHistory.find(
-    (item) => String(item.id) === String(id),
-  );
+  // 1. Get dynamic items from localStorage (or Redux if you're using it)
+  const localData =
+    JSON.parse(localStorage.getItem("naijaprice_commodities")) || [];
+
+  // 2. Combine the static priceHistory with the local data
+  const allItems = [...priceHistory, ...localData];
+
+  const commodityData = allItems.find((item) => String(item.id) === String(id));
   console.log(commodityData);
 
   // 1. Only store the MARKET in state, not the Title.
@@ -51,48 +56,46 @@ function Commodity() {
               </div>
             </div>
             <div className="flex flex-col items-center p-4">
-              {priceHistory
-                .filter((commodity) => commodity.id === Number(id))
-                .map((commodity) => (
-                  <div
-                    key={commodity.id}
-                    className="flex flex-col gap-2 items-center"
-                  >
+              {
+                <div
+                  key={commodityData.id}
+                  className="flex flex-col gap-2 items-center"
+                >
+                  {" "}
+                  <div className="flex gap-2 items-center">
                     {" "}
-                    <div className="flex gap-2 items-center">
-                      {" "}
-                      <img
-                        className="w-12.5 h-12.5 rounded-lg object-cover"
-                        src={commodity.image}
-                        alt={commodity.title}
-                      />
-                      <h3 className="text-lg font-bold mt-2">
-                        {commodity.title}
-                      </h3>
-                    </div>
-                    <span className="text-3xl font-bold">
-                      {commodity.price}
-                    </span>
-                    <p className="text-gray-500 text-sm mt-2">
-                      {commodity.snippet}
-                    </p>
+                    <img
+                      className="w-12.5 h-12.5 rounded-lg object-cover"
+                      src={commodityData.image}
+                      alt={commodityData.title}
+                    />
+                    <h3 className="text-lg font-bold mt-2">
+                      {commodityData.title}
+                    </h3>
+                  </div>
+                  <span className="text-3xl font-bold">
+                    {commodityData.price}
+                  </span>
+                  <p className="text-gray-500 text-sm mt-2">
+                    {commodityData.snippet}
+                  </p>
+                  <div
+                    className={`flex items-center gap-2 mt-2 ${commodityData.trendDirection === "down" ? "bg-[#00C950]/10" : "bg-red-100"} p-2 rounded-xl`}
+                  >
+                    {commodityData.trendDirection === "down" ? (
+                      <TrendingDown size={16} className="text-green-500" />
+                    ) : (
+                      <TrendingUp size={16} className="text-red-500" />
+                    )}
                     <div
-                      className={`flex items-center gap-2 mt-2 ${commodity.trendDirection === "down" ? "bg-[#00C950]/10" : "bg-red-100"} p-2 rounded-xl`}
+                      className={`${commodityData.trendDirection === "down" ? "text-green-500" : "text-red-500"} text-sm font-bold`}
                     >
-                      {commodity.trendDirection === "down" ? (
-                        <TrendingDown size={16} className="text-green-500" />
-                      ) : (
-                        <TrendingUp size={16} className="text-red-500" />
-                      )}
-                      <div
-                        className={`${commodity.trendDirection === "down" ? "text-green-500" : "text-red-500"} text-sm font-bold`}
-                      >
-                        <span className="mr-2">{commodity.trend}%</span>
-                        vs yesterday
-                      </div>
+                      <span className="mr-2">{commodityData.trend}%</span>
+                      vs yesterday
                     </div>
                   </div>
-                ))}
+                </div>
+              }
             </div>
             <div className="flex flex-col gap-2 xl:flex-row xl:justify-between p-4">
               <PriceHistory selectedCommodity={activeItem} />

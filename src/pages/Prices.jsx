@@ -64,20 +64,15 @@ function Prices() {
   // Logic: Filter and Sort
   const allMarketItems = commodities
     .filter((item) => {
-      // 1. Check Market (Case insensitive check is safer)
-      const matchesMarket =
-        item.market?.toLowerCase() === currentLocation.market?.toLowerCase();
+      // 1. STRICT MARKET CHECK
+      // Only show if the item explicitly belongs to the selected market
+      const matchesMarket = item.market === currentLocation.market;
 
-      // 2. Check Category
       const matchesCat =
         activeCategory === "All" || item.category === activeCategory;
-
-      // 3. Check Search
       const matchesSearch = item.title
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
-
-      // 4. Check Source
       const matchesSource =
         filterSource === "all" || item.source === filterSource;
 

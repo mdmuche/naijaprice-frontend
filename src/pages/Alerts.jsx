@@ -14,6 +14,7 @@ import Btn from "../components/Btn";
 import BtnSecondary from "../components/BtnSecondary";
 import { allMarketsData } from "../utils/marketData";
 import { INITIAL_ALERTS } from "../utils/alertsData";
+import { useSelector } from "react-redux";
 
 function Alerts() {
   const [alerts, setAlerts] = useState(INITIAL_ALERTS);
@@ -21,6 +22,8 @@ function Alerts() {
   const [showSettings, setShowSettings] = useState(false);
   const [activeTab, setActiveTab] = useState("alerts");
   const [userMarket, setUserMarket] = useState(null);
+  const user = useSelector((state) => state.user.profile);
+  const tabs = user ? ["alerts", "predictions"] : ["alerts"];
 
   // 1. Distance Calculation Logic
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
@@ -66,7 +69,11 @@ function Alerts() {
   }, []);
 
   // 3. Logic for filtering and predicting
-  const nearbyAlerts = alerts.filter((alert) => alert.market === userMarket);
+  const localData = JSON.parse(localStorage.getItem("naijaprice_alerts")) || [];
+  const alertsData = [...alerts, ...localData];
+  const nearbyAlerts = alertsData.filter(
+    (alert) => alert.market === userMarket,
+  );
 
   const predictionStats = nearbyAlerts.reduce(
     (acc, alert) => {
@@ -78,6 +85,8 @@ function Alerts() {
   );
 
   const handleAddNewAlert = (newAlertObject) => {
+    const updatedLocal = [newAlertObject, ...localData];
+    localStorage.setItem("naijaprice_alerts", JSON.stringify(updatedLocal));
     setAlerts([newAlertObject, ...alerts]);
     setIsAdding(false);
   };
@@ -141,11 +150,11 @@ function Alerts() {
             <>
               {/* Tabs */}
               <div className="flex gap-8 border-b border-gray-100 mb-6">
-                {["alerts", "predictions"].map((tab) => (
+                {tabs.map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`pb-3 text-sm font-bold capitalize transition-all ${
+                    className={`pb-3 text-sm cursor-pointer font-bold capitalize transition-all ${
                       activeTab === tab
                         ? "border-b-2 border-[#00C950] text-black"
                         : "text-gray-400"
@@ -160,9 +169,11 @@ function Alerts() {
               {activeTab === "alerts" ? (
                 <div className="flex flex-col gap-6">
                   <AlertList alerts={nearbyAlerts} />
-                  <div onClick={() => setIsAdding(true)}>
-                    <Btn btnText="+ Set New Price Alert" />
-                  </div>
+                  {user && (
+                    <div onClick={() => setIsAdding(true)}>
+                      <Btn btnText="+ Set New Price Alert" />
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="bg-gray-50 p-6 rounded-3xl border-2 border-dashed border-gray-200">

@@ -52,27 +52,28 @@ export const getProcessedMarkets = (markets) => {
   });
 };
 
+const initialMarkets = allMarketsData.map((market) => {
+  const marketItems = commoditiesData.filter((c) => c.market === market.title);
+
+  // Find the newest date string
+  const latestTimestamp = marketItems.reduce((latest, item) => {
+    return !latest || new Date(item.createdAt) > new Date(latest)
+      ? item.createdAt
+      : latest;
+  }, null);
+
+  return {
+    ...market,
+    reports: marketItems.length,
+    lastUpdated: latestTimestamp ? timeAgo(latestTimestamp) : "N/A",
+  };
+});
+const savedMarkets = JSON.parse(localStorage.getItem("approved_markets")) || [];
+const combinedMarkets = [...initialMarkets, ...savedMarkets];
 const marketSlice = createSlice({
   name: "markets",
   initialState: {
-    allMarkets: allMarketsData.map((market) => {
-      const marketItems = commoditiesData.filter(
-        (c) => c.market === market.title,
-      );
-
-      // Find the newest date string
-      const latestTimestamp = marketItems.reduce((latest, item) => {
-        return !latest || new Date(item.createdAt) > new Date(latest)
-          ? item.createdAt
-          : latest;
-      }, null);
-
-      return {
-        ...market,
-        reports: marketItems.length,
-        lastUpdated: latestTimestamp ? timeAgo(latestTimestamp) : "N/A",
-      };
-    }),
+    allMarkets: combinedMarkets,
     filteredMarkets: [],
     userLocation: null,
     searchLocation: null,
@@ -133,6 +134,7 @@ const marketSlice = createSlice({
 
       // Calculate distance for EVERYTHING in the database
       state.filteredMarkets = state.allMarkets
+        .filter((m) => m && m.coords)
         .map((m) => {
           const d = calculateDistance(lat, lng, m.coords[0], m.coords[1]);
           return { ...m, distance: `${d} km away`, rawDist: parseFloat(d) };
@@ -171,13 +173,22 @@ const marketSlice = createSlice({
       }
     }, // Action to add a newly approved market
     approveNewMarket: (state, action) => {
-      // We spread the suggestion and overwrite the status
+      // 1. Create the new market object
       const approvedMarket = {
         ...action.payload,
         status: "active",
-        id: state.allMarkets.length + 1,
+        isCustom: true, // IMPORTANT: Mark this so we know it belongs in LocalStorage
+        id: `custom-${Date.now()}`, // Use a unique ID to avoid collisions
       };
+
+      // 2. Add to the Redux state immediately
       state.allMarkets.unshift(approvedMarket);
+
+      // 3. PERSIST to a specific key for APPROVED markets
+      // We only filter for 'isCustom' so we don't save the 100+ static markets again
+      const customMarkets = state.allMarkets.filter((m) => m.isCustom);
+
+      localStorage.setItem("approved_markets", JSON.stringify(customMarkets));
     },
   },
 });

@@ -7,8 +7,12 @@ import {
   User,
 } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
+import { getUserToken } from "../utils/getUserToken";
+import { useSelector } from "react-redux";
 
 function DesktopNav() {
+  const user = getUserToken();
+  const { isAdmin } = useSelector((state) => state.user);
   const navLinkClass = ({ isActive }) =>
     `flex items-center gap-2 p-2.5 w-full rounded-lg transition-colors ${
       isActive
@@ -47,18 +51,22 @@ function DesktopNav() {
             <span>Alerts</span>
           </NavLink>
         </li>
-        <li>
-          <NavLink to="/profile" className={navLinkClass}>
-            <User />
-            <span>Profile</span>
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to="/admin" className={navLinkClass}>
-            <ShieldCheck />
-            <span>Admin</span>
-          </NavLink>
-        </li>
+        {user && (
+          <li>
+            <NavLink to="/profile" className={navLinkClass}>
+              <User />
+              <span>Profile</span>
+            </NavLink>
+          </li>
+        )}
+        {isAdmin && (
+          <li>
+            <NavLink to="/admin" className={navLinkClass}>
+              <ShieldCheck />
+              <span>Admin</span>
+            </NavLink>
+          </li>
+        )}
       </ul>
     </nav>
   );

@@ -8,8 +8,20 @@ import {
   UserPen,
 } from "lucide-react";
 import SettingListItem from "./SettingListItem";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { logoutUser } from "../store/slices/userSlice";
 
 function Settings({ className }) {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    dispatch(logoutUser());
+    localStorage.removeItem("naijaprice_user");
+    localStorage.removeItem("naijaprice_user_token");
+    navigate("/login");
+  };
+
   const settingsList = [
     {
       id: 1,
@@ -50,7 +62,10 @@ function Settings({ className }) {
       {settingsList.map((item) => (
         <SettingListItem key={item.id} {...item} />
       ))}
-      <div className="flex items-center gap-2 text-red-500 mt-4">
+      <div
+        onClick={handleLogout}
+        className="flex items-center gap-2 text-red-500 mt-4 cursor-pointer"
+      >
         <div className="bg-[#FF0000]/10 p-2 rounded-lg w-fit cursor-pointer">
           <LogOut size={16} />
         </div>

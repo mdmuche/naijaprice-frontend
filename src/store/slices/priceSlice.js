@@ -1,4 +1,4 @@
-import { createSlice, current } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { commoditiesData } from "../../utils/CommoditiesData";
 
 /**
@@ -26,8 +26,18 @@ const generateMarketTrends = (commodities, marketName) => {
   });
 };
 
+const getInitialCommodities = () => {
+  const savedReports = localStorage.getItem("naijaprice_commodities");
+  const parsedReports = savedReports ? JSON.parse(savedReports) : [];
+
+  /** * We spread parsedReports first so that user-added items
+   * appear at the top, followed by the default commoditiesData.
+   */
+  return [...parsedReports, ...commoditiesData];
+};
+
 const initialState = {
-  commodities: commoditiesData,
+  commodities: getInitialCommodities(),
   activeCategory: "All",
   searchTerm: "",
   sortBy: "latest",
@@ -75,7 +85,13 @@ const priceSlice = createSlice({
       // unshift adds it to the very beginning of the array
       // so it shows up as the "Latest" report
       state.commodities.unshift(action.payload);
-      console.log(current(state.commodities));
+      const userReportsOnly = state.commodities.filter((item) => item.userId);
+
+      localStorage.setItem(
+        "naijaprice_commodities",
+        JSON.stringify(userReportsOnly),
+      );
+      // console.log("current: ", current(state.commodities));
     },
     setTrendTimeframe: (state, action) => {
       state.trendTimeframe = action.payload;

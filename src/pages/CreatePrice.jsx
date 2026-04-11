@@ -18,8 +18,11 @@ import { allMarketsData } from "../utils/marketData";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { addPriceReport } from "../store/slices/priceSlice";
+import { newDate } from "../utils/monthDate";
 
 function CreatePrice() {
+  // 1. Get the logged-in user's profile
+  const user = useSelector((state) => state.user.profile);
   // --- REDUX & ROUTING ---
   const commodities = useSelector((state) => state.prices.commodities);
   const dispatch = useDispatch();
@@ -42,7 +45,7 @@ function CreatePrice() {
   const fileInputRef = useRef();
   // const scrollRef = useRef();
 
-  // --- 1. SMART GPS DETECTION LOGIC ---
+  // --- SMART GPS DETECTION LOGIC ---
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -92,12 +95,22 @@ function CreatePrice() {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
+
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        alert("File is too large. Max 5MB.");
+      if (file.size > 1 * 1024 * 1024) {
+        // Reduced to 1MB for LocalStorage safety
+        alert(
+          "File is too large. Try an image under 1MB for better performance.",
+        );
         return;
       }
-      setPreview(URL.createObjectURL(file));
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result;
+        setPreview(base64String); // This stores the Base64 string in state
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -129,6 +142,7 @@ function CreatePrice() {
     // 2. Construct the object to match your CommodityCard requirements
     const reportData = {
       id: `rep-${Date.now()}`,
+      userId: user.id,
       title: selectedItem.title,
       category: selectedCategory,
       market: selectedMarket.title,
@@ -138,7 +152,8 @@ function CreatePrice() {
       // CRITICAL: Use the path from the selected item if no new photo was taken
       image: preview || selectedItem.image || "/images/default-food.svg",
       source: "crowdsourced",
-      createdAt: new Date().toISOString(),
+      date: newDate(),
+      status: "pending",
       trend: Math.abs(trendPercentage), // Card expects a positive number for display
       trendDirection: trendDir,
     };

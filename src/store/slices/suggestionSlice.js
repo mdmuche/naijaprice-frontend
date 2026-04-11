@@ -2,7 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const suggestionSlice = createSlice({
   name: "suggestions",
-  initialState: { pendingMarkets: [] },
+  initialState: {
+    pendingMarkets: JSON.parse(localStorage.getItem("pending_markets")) || [],
+  },
   reducers: {
     addMarketSuggestion: (state, action) => {
       state.pendingMarkets.unshift(action.payload);
@@ -15,6 +17,10 @@ const suggestionSlice = createSlice({
     removeSuggestion: (state, action) => {
       state.pendingMarkets = state.pendingMarkets.filter(
         (m) => m.id !== action.payload,
+      );
+      localStorage.setItem(
+        "pending_markets",
+        JSON.stringify(state.pendingMarkets),
       );
     },
   },
