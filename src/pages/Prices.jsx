@@ -24,15 +24,20 @@ import PriceChart from "../components/PriceChart";
 import PriceTrendCard from "../components/PriceTrendCard";
 import SearchContainer from "../components/Search";
 import Filter from "../components/Filter";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { markAllAsRead } from "../store/slices/alertSlice";
+import { LastUpdated } from "../components/LastUpdated";
 
 function Prices() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isLocationOpen, setIsLocationOpen] = useState(false);
   const [locationSearch, setLocationSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
-  const itemsPerPage = 8;
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const itemsPerPage = 8;
+  const alerts = useSelector((state) => state.alerts.allAlerts);
+  const hasUnread = alerts?.some((alert) => !alert.read);
 
   const {
     commodities,
@@ -43,6 +48,9 @@ function Prices() {
     filterSource,
     currentLocation,
   } = useSelector((state) => state.prices);
+
+  const latestReport = commodities[0];
+  // console.log(latestReport.createdAt);
 
   const marketsList = [
     { state: "Lagos", lga: "Kosofe", market: "Mile 12 Market" },
@@ -154,9 +162,23 @@ function Prices() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Bell size={20} />
+            <div
+              className="relative cursor-pointer"
+              onClick={() => {
+                dispatch(markAllAsRead());
+                navigate("/alerts");
+              }}
+            >
+              <Bell size={20} />
+
+              {hasUnread.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
+                  {hasUnread.length}
+                </span>
+              )}
+            </div>
             <Clock className="text-gray-500" size={16} />
-            <span className="text-gray-500">Last updated: 2mins ago</span>
+            <LastUpdated timestamp={latestReport.createdAt} />
           </div>
         </div>
 

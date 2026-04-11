@@ -15,8 +15,19 @@ const alertsSlice = createSlice({
         JSON.stringify(state.allAlerts),
       );
     },
+    markAllAsRead: (state) => {
+      state.allAlerts = state.allAlerts.map((alert) => ({
+        ...alert,
+        read: true,
+      }));
+
+      localStorage.setItem(
+        "naijaprice_alerts",
+        JSON.stringify(state.allAlerts),
+      );
+    },
   },
 });
 
-export const { addAlert } = alertsSlice.actions;
+export const { addAlert, markAllAsRead } = alertsSlice.actions;
 export default alertsSlice.reducer;

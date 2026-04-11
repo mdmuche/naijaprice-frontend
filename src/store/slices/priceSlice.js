@@ -1,30 +1,32 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { commoditiesData } from "../../utils/CommoditiesData";
+import { generateTrendsFromHistory } from "../../utils/trendUtils";
+import { priceHistory } from "../../utils/priceHistoryData";
 
 /**
  * HELPER: Generates mock historical data for the Chart based on
  * the items actually present in the selected market.
  */
-const generateMarketTrends = (commodities, marketName) => {
-  const marketItems = commodities
-    .filter((item) => item.market === marketName)
-    .slice(0, 5); // Limits to 5 items to keep the chart readable
+// const generateMarketTrends = (commodities, marketName) => {
+//   const marketItems = commodities
+//     .filter((item) => item.market === marketName)
+//     .slice(0, 5); // Limits to 5 items to keep the chart readable
 
-  if (marketItems.length === 0) return [];
+//   if (marketItems.length === 0) return [];
 
-  const days = ["Day 1", "Day 10", "Day 20", "Day 30"];
+//   const days = ["Day 1", "Day 10", "Day 20", "Day 30"];
 
-  return days.map((day, index) => {
-    const dataPoint = { day };
-    marketItems.forEach((item) => {
-      // Logic: Simulate a price trend that fluctuates but ends near the current price
-      const fluctuation = 1 + Math.sin(index + item.id) * 0.06;
-      const key = item.title.toLowerCase();
-      dataPoint[key] = Math.round(item.price * fluctuation);
-    });
-    return dataPoint;
-  });
-};
+//   return days.map((day, index) => {
+//     const dataPoint = { day };
+//     marketItems.forEach((item) => {
+//       // Logic: Simulate a price trend that fluctuates but ends near the current price
+//       const fluctuation = 1 + Math.sin(index + item.id) * 0.06;
+//       const key = item.title.toLowerCase();
+//       dataPoint[key] = Math.round(item.price * fluctuation);
+//     });
+//     return dataPoint;
+//   });
+// };
 
 const getInitialCommodities = () => {
   const savedReports = localStorage.getItem("naijaprice_commodities");
@@ -49,12 +51,11 @@ const initialState = {
   },
   trendTimeframe: "30d",
   // Default trends for the first view (Mile 12)
-  marketTrends: [
-    { day: "Day 1", tomatoes: 42000, rice: 78000, garri: 3200, beans: 6800 },
-    { day: "Day 10", tomatoes: 44000, rice: 80000, garri: 3400, beans: 7000 },
-    { day: "Day 20", tomatoes: 43000, rice: 81000, garri: 3500, beans: 7100 },
-    { day: "Day 30", tomatoes: 45000, rice: 82000, garri: 3500, beans: 7200 },
-  ],
+  marketTrends: generateTrendsFromHistory(
+    priceHistory,
+    "Mile 12 Market",
+    "30d",
+  ),
 };
 
 const priceSlice = createSlice({
@@ -75,16 +76,21 @@ const priceSlice = createSlice({
     },
     setLocation: (state, action) => {
       state.currentLocation = action.payload;
-      // DYNAMIC: Update the chart data whenever the location/market changes
-      state.marketTrends = generateMarketTrends(
-        state.commodities,
+
+      state.marketTrends = generateTrendsFromHistory(
+        priceHistory,
         action.payload.market,
+        state.trendTimeframe,
       );
     },
     addPriceReport: (state, action) => {
       // unshift adds it to the very beginning of the array
-      // so it shows up as the "Latest" report
-      state.commodities.unshift(action.payload);
+      // so it shows up as the "Latest" reportconst newReport = {
+      const newReport = {
+        ...action.payload,
+        createdAt: new Date().toISOString(),
+      };
+      state.commodities.unshift(newReport);
       const userReportsOnly = state.commodities.filter((item) => item.userId);
 
       localStorage.setItem(
@@ -95,6 +101,12 @@ const priceSlice = createSlice({
     },
     setTrendTimeframe: (state, action) => {
       state.trendTimeframe = action.payload;
+
+      state.marketTrends = generateTrendsFromHistory(
+        priceHistory,
+        state.currentLocation.market,
+        action.payload,
+      );
     },
   },
 });
