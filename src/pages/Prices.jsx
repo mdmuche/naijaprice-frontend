@@ -27,6 +27,7 @@ import Filter from "../components/Filter";
 import { Link, useNavigate } from "react-router-dom";
 import { markAllAsRead } from "../store/slices/alertSlice";
 import { LastUpdated } from "../components/LastUpdated";
+import Pagination from "../components/Pagination";
 
 function Prices() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -35,6 +36,7 @@ function Prices() {
   const [currentPage, setCurrentPage] = useState(0);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const itemsPerPage = 8;
   const alerts = useSelector((state) => state.alerts.allAlerts);
   const hasUnread = alerts?.some((alert) => !alert.read);
@@ -105,7 +107,6 @@ function Prices() {
     startIndex,
     startIndex + itemsPerPage,
   );
-  const hasMore = allMarketItems.length > itemsPerPage;
 
   // 1. First, get only commodities for the current selected market
   const currentMarketCommodities = commodities.filter(
@@ -211,35 +212,13 @@ function Prices() {
           </div>
 
           {/* Slider Controls */}
-          {hasMore && (
-            <div className="flex items-center gap-3 bg-white p-1 rounded-xl border border-gray-200">
-              <button
-                disabled={safePage === 0}
-                onClick={() => setCurrentPage((prev) => prev - 1)}
-                className={`p-2 rounded-lg transition-all ${
-                  safePage === 0
-                    ? "text-gray-300"
-                    : "text-[#00C950] hover:bg-green-50"
-                }`}
-              >
-                <ChevronLeft size={20} />
-              </button>
-              <span className="text-xs font-bold text-gray-600">
-                Page {safePage + 1} of {totalPages}
-              </span>
-              <button
-                disabled={startIndex + itemsPerPage >= allMarketItems.length}
-                onClick={() => setCurrentPage((prev) => prev + 1)}
-                className={`p-2 rounded-lg transition-all ${
-                  startIndex + itemsPerPage >= allMarketItems.length
-                    ? "text-gray-300"
-                    : "text-[#00C950] hover:bg-green-50"
-                }`}
-              >
-                <ChevronRight size={20} />
-              </button>
-            </div>
-          )}
+          <Pagination
+            page={safePage}
+            totalPages={totalPages}
+            onPrev={() => setCurrentPage((prev) => prev - 1)}
+            onNext={() => setCurrentPage((prev) => prev + 1)}
+            slider={false}
+          />
 
           <div className="flex items-center gap-4">
             <Filter onClick={() => setIsFilterOpen(true)} />

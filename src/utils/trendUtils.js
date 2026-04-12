@@ -44,7 +44,6 @@ export const generateTrendsFromHistory = (history, market, timeframe) => {
   const filtered = history.filter((item) => item.market === market);
 
   const timeFiltered = filterByDays(filtered, daysMap[timeframe]);
-  console.log("filtered", timeFiltered);
 
   const grouped = groupByDay(timeFiltered);
 

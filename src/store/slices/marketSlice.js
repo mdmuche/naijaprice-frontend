@@ -139,8 +139,7 @@ const marketSlice = createSlice({
           const d = calculateDistance(lat, lng, m.coords[0], m.coords[1]);
           return { ...m, distance: `${d} km away`, rawDist: parseFloat(d) };
         })
-        .sort((a, b) => a.rawDist - b.rawDist) // Closest to user first
-        .slice(0, 5); // Only show the 5 nearest
+        .sort((a, b) => a.rawDist - b.rawDist); // Closest to user first
     },
     setFilterStatus: (state, action) => {
       state.filterStatus = action.payload;

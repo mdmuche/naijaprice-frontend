@@ -10,7 +10,6 @@ function PricePerMarketCard({
   isActive,
   onClick,
 }) {
-  console.log(market);
   return (
     <div
       onClick={onClick}

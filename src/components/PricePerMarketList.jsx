@@ -1,10 +1,23 @@
 import PricePerMarketCard from "./PricePerMarketCard";
 import { priceHistory } from "../utils/priceHistoryData";
-priceHistory.filter((p) => console.log(p.title));
-// .slice(0, 3)
-// .map((item) => console.log(item.market));
+import { useState } from "react";
+import Pagination from "./Pagination";
 
 function PricePerMarketList({ activeMarket, onMarketSelect, commodityTitle }) {
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 3;
+
+  const filtered = priceHistory.filter(
+    (p) => p.title.toLowerCase() === commodityTitle.toLowerCase(),
+  );
+  // pagination logic
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+
+  const safePage = currentPage >= totalPages ? 0 : currentPage;
+
+  const startIndex = safePage * itemsPerPage;
+
+  const visibleData = filtered.slice(startIndex, startIndex + itemsPerPage);
   return (
     <div className="w-full xl:w-[38%]">
       <div className="w-full flex items-center justify-between mb-4">
@@ -16,28 +29,28 @@ function PricePerMarketList({ activeMarket, onMarketSelect, commodityTitle }) {
 
       <div className="flex flex-col gap-4">
         {/* Mapping DIRECTLY from your data file */}
-        {priceHistory
-          .filter(
-            (p) =>
-              p.market === activeMarket &&
-              p.title.toLowerCase() === commodityTitle.toLowerCase(),
-          )
-          .slice(0, 3)
-          .map((item) => (
-            <PricePerMarketCard
-              key={item.id}
-              market={item.market}
-              price={item.price}
-              location={item.location}
-              trend={item.trend}
-              trendDirection={item.trendDirection}
-              source={item.source}
-              // Comparison for the active state
-              isActive={activeMarket === item.market}
-              // Function to change the active state
-              onClick={() => onMarketSelect({ market: item.market })}
-            />
-          ))}
+        {visibleData.map((item) => (
+          <PricePerMarketCard
+            key={item.id}
+            market={item.market}
+            price={item.price}
+            location={item.location}
+            trend={item.trend}
+            trendDirection={item.trendDirection}
+            source={item.source}
+            // Comparison for the active state
+            isActive={activeMarket === item.market}
+            // Function to change the active state
+            onClick={() => onMarketSelect({ market: item.market })}
+          />
+        ))}
+        <Pagination
+          page={safePage}
+          totalPages={totalPages}
+          onNext={() => setCurrentPage((p) => p + 1)}
+          onPrev={() => setCurrentPage((p) => p - 1)}
+          slider={true}
+        />
       </div>
     </div>
   );

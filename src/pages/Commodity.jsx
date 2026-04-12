@@ -17,7 +17,6 @@ function Commodity() {
   const allItems = [...priceHistory, ...localData];
 
   const commodityData = allItems.find((item) => String(item.id) === String(id));
-  console.log(commodityData);
 
   // 1. Only store the MARKET in state, not the Title.
   // The Title is already known from the URL/commodityData.
@@ -31,7 +30,6 @@ function Commodity() {
     title: commodityData?.title || "",
     market: activeMarket,
   };
-  console.log(activeItem);
 
   // if (!commodityData) return <div>Loading...</div>;
 

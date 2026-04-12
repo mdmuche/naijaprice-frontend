@@ -15,6 +15,7 @@ import BtnSecondary from "../components/BtnSecondary";
 import { allMarketsData } from "../utils/marketData";
 import { INITIAL_ALERTS } from "../utils/alertsData";
 import { useSelector } from "react-redux";
+import Pagination from "../components/Pagination";
 
 function Alerts() {
   const [alerts, setAlerts] = useState(INITIAL_ALERTS);
@@ -24,6 +25,8 @@ function Alerts() {
   const [userMarket, setUserMarket] = useState(null);
   const user = useSelector((state) => state.user.profile);
   const tabs = user ? ["alerts", "predictions"] : ["alerts"];
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 5;
 
   // 1. Distance Calculation Logic
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
@@ -73,6 +76,17 @@ function Alerts() {
   const alertsData = [...alerts, ...localData];
   const nearbyAlerts = alertsData.filter(
     (alert) => alert.market === userMarket,
+  );
+
+  const totalPages = Math.ceil(nearbyAlerts.length / itemsPerPage);
+  if (totalPages === 0) return null;
+  const safePage = currentPage >= totalPages ? 0 : currentPage;
+
+  const startIndex = safePage * itemsPerPage;
+
+  const visibleAlerts = nearbyAlerts.slice(
+    startIndex,
+    startIndex + itemsPerPage,
   );
 
   const predictionStats = nearbyAlerts.reduce(
@@ -168,7 +182,14 @@ function Alerts() {
               {/* Tab Content */}
               {activeTab === "alerts" ? (
                 <div className="flex flex-col gap-6">
-                  <AlertList alerts={nearbyAlerts} />
+                  <AlertList alerts={visibleAlerts} />
+                  <Pagination
+                    page={safePage}
+                    totalPages={totalPages}
+                    onNext={() => setCurrentPage((p) => p + 1)}
+                    onPrev={() => setCurrentPage((p) => p - 1)}
+                    slider={true}
+                  />
                   {user && (
                     <div onClick={() => setIsAdding(true)}>
                       <Btn btnText="+ Set New Price Alert" />

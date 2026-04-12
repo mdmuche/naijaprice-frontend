@@ -2,12 +2,21 @@ import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import NearbyMarketCard from "./NearbyMarketCard";
 import Btn from "./Btn";
+import Pagination from "./Pagination";
+import { useState } from "react";
 
 function NearByMarketList() {
   const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const itemsPerPage = 5;
   const { filteredMarkets, userLocation } = useSelector(
     (state) => state.markets,
   );
+
+  // useEffect(() => {
+  //   setCurrentPage(0);
+  // }, [searchQuery]);
 
   if (!userLocation) {
     return (
@@ -15,14 +24,24 @@ function NearByMarketList() {
         Detecting your location...
       </div>
     );
-  }
+  } // Pagination logic
+  const totalPages = Math.ceil(filteredMarkets.length / itemsPerPage);
+
+  const safePage = currentPage >= totalPages ? 0 : currentPage;
+
+  const startIndex = safePage * itemsPerPage;
+
+  const visibleMarkets = filteredMarkets.slice(
+    startIndex,
+    startIndex + itemsPerPage,
+  );
 
   return (
     <div className="flex flex-col gap-4">
       {/* 1. The Market List */}
       <div className="flex flex-col gap-3">
-        {filteredMarkets.length > 0 ? (
-          filteredMarkets.map((market) => (
+        {visibleMarkets.length > 0 ? (
+          visibleMarkets.map((market) => (
             <NearbyMarketCard key={market.id} {...market} />
           ))
         ) : (
@@ -37,6 +56,15 @@ function NearByMarketList() {
         )}
       </div>
 
+      {totalPages > 1 && (
+        <Pagination
+          page={currentPage}
+          totalPages={totalPages}
+          onPrev={() => setCurrentPage((p) => p - 1)}
+          onNext={() => setCurrentPage((p) => p + 1)}
+          slider={true}
+        />
+      )}
       {/* 2. The Suggestion Action */}
       <div
         className="mt-2 cursor-pointer"
