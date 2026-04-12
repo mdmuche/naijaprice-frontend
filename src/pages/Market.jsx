@@ -4,16 +4,15 @@ import { useDispatch, useSelector } from "react-redux";
 
 // Components
 import MarketMap from "../components/MarketMap";
-import Navigation from "../components/Navigation";
 import NearByMarkets from "../components/NearByMarkets";
 import SearchContainer from "../components/Search";
 import FilterMarket from "../components/FilterMarket";
+import AppShell from "../components/layout/AppShell";
+import Card from "../components/ui/Card";
+import PageIntro from "../components/ui/PageIntro";
 
 // Redux Actions
-import {
-  setSearchQuery,
-  updateNearbyMarkets,
-} from "../store/slices/marketSlice";
+import { updateNearbyMarkets } from "../store/slices/marketSlice";
 
 function Market() {
   const dispatch = useDispatch();
@@ -69,45 +68,37 @@ function Market() {
   }, [dispatch, searchQuery]); // Removed filteredMarkets from dependencies to prevent loops
 
   return (
-    <div className="flex min-h-screen">
-      <Navigation />
-      <div className="flex flex-1 flex-col gap-4 p-2 mt-4 z-0 lg:mt-0 lg:p-4 md:ml-64 lg:h-screen">
-        <div className="flex flex-col items-start justify-between xl:items-center xl:flex-row gap-4">
-          <div>
-            <h1 className="text-2xl font-bold">Market</h1>
-            <p className="text-gray-600">Discover community markets near you</p>
-          </div>
+    <AppShell contentClassName="z-0 flex flex-col gap-6 px-3 py-4 md:px-6 md:py-6 lg:h-screen">
+      <PageIntro
+        title="Markets"
+        subtitle="Discover community markets near you and browse verified locations faster."
+      />
 
-          <div className="flex flex-col items-start lg:items-center gap-4 lg:flex-row w-full lg:w-auto">
-            <SearchContainer
-              placeholder="Search markets..."
-              page="markets"
-              action={setSearchQuery}
-              selector={(state) => state.markets.searchQuery}
-            />
+      <Card className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between" padding="md">
+        <div className="flex w-full flex-col items-start gap-4 lg:flex-row lg:items-center lg:w-auto">
+          <SearchContainer placeholder="Search markets..." page="markets" />
 
-            <div className="flex flex-row items-center gap-4">
-              <FilterMarket />
-              <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100 whitespace-nowrap">
-                <MapPin size={16} className="text-[#00C950] shrink-0" />
-                <span className="text-sm font-semibold text-gray-700">
-                  {displayAddress} {/* Use the derived address here */}
-                </span>
-              </div>
+          <div className="flex flex-row items-center gap-4">
+            <FilterMarket />
+            <div className="flex items-center gap-2 rounded-full border border-gray-100 bg-gray-50 px-3 py-1.5 whitespace-nowrap">
+              <MapPin size={16} className="shrink-0 text-[#00C950]" />
+              <span className="text-sm font-semibold text-gray-700">
+                {displayAddress}
+              </span>
             </div>
           </div>
         </div>
+      </Card>
 
-        <div className="z-0 flex-1 flex flex-col gap-8 lg:flex-row lg:gap-4 min-h-0">
-          <div className="h-96 shrink-0 lg:h-full lg:flex-1">
-            <MarketMap />
-          </div>
-          <div className="flex-1 min-h-0 lg:h-full lg:flex-1 overflow-y-auto custom-scrollbar">
-            <NearByMarkets />
-          </div>
+      <div className="min-h-0 flex flex-1 flex-col gap-6 lg:flex-row">
+        <Card className="h-96 shrink-0 lg:h-full lg:flex-1" padding="none">
+          <MarketMap />
+        </Card>
+        <div className="min-h-0 flex-1 overflow-y-auto custom-scrollbar">
+          <NearByMarkets />
         </div>
       </div>
-    </div>
+    </AppShell>
   );
 }
 

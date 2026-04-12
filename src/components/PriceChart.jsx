@@ -11,6 +11,8 @@ import {
   CartesianGrid,
   Legend,
 } from "recharts";
+import Card from "./ui/Card";
+import EmptyState from "./ui/EmptyState";
 
 function PriceChart({ className }) {
   const dispatch = useDispatch();
@@ -54,14 +56,16 @@ function PriceChart({ className }) {
 
   if (!marketTrends || marketTrends.length === 0) {
     return (
-      <div className="p-8 text-center text-gray-400 bg-white rounded-xl shadow-sm">
-        No trend data available for {currentLocation.market}.
-      </div>
+      <EmptyState
+        title="No trend data available"
+        description={`There isn't enough reporting history for ${currentLocation.market} yet.`}
+        className={className}
+      />
     );
   }
 
   return (
-    <div className={`bg-white rounded-xl shadow-sm p-4 ${className}`}>
+    <Card className={className} padding="md">
       <div className="flex flex-col items-start justify-between gap-4 mb-4 sm:flex-row">
         <div>
           <h2 className="text-lg font-semibold">
@@ -146,7 +150,7 @@ function PriceChart({ className }) {
           </LineChart>
         </ResponsiveContainer>
       </div>
-    </div>
+    </Card>
   );
 }
 

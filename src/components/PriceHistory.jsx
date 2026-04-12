@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 // import { useSelector } from "react-redux";
 import CommodityTrendChart from "./CommodityTrendChart";
 import { priceHistory } from "../utils/priceHistoryData";
+import EmptyState from "./ui/EmptyState";
 
 function PriceHistory({ selectedCommodity }) {
   const [range, setRange] = useState(30);
@@ -42,13 +43,14 @@ function PriceHistory({ selectedCommodity }) {
       .reverse();
   }, [allReports, selectedCommodity, range]);
 
-  // 4. If no commodity is selected yet, show a nice empty state
   if (!selectedCommodity) {
     return (
-      <div className="w-full xl:w-[60%] h-64 flex items-center justify-center bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
-        <p className="text-gray-400 font-medium">
-          Select a market to view price trends
-        </p>
+      <div className="w-full xl:w-[60%]">
+        <EmptyState
+          title="Select a market to view price trends"
+          description="Choose a market to compare commodity history over time."
+          className="h-64 flex items-center justify-center"
+        />
       </div>
     );
   }

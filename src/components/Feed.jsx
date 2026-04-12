@@ -1,16 +1,17 @@
 import CommodityCard from "./CommodityCard";
-// REMOVED: import { commodities } from "../data";
+import EmptyState from "./ui/EmptyState";
 
 function Feed({ items }) {
-  // Accepting items as a prop
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 p-4">
-      {/* If there are no items (e.g., search found nothing), show a message */}
+    <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 xl:grid-cols-3">
       {items && items.length > 0 ? (
         items.map((item) => <CommodityCard key={item.id} item={item} />)
       ) : (
-        <div className="col-span-full text-center py-10 text-gray-500">
-          No commodities found matching your filters.
+        <div className="col-span-full">
+          <EmptyState
+            title="No commodities found"
+            description="Try adjusting your filters, changing market, or broadening your search."
+          />
         </div>
       )}
     </div>

@@ -3,6 +3,8 @@
 
 :root {
   color-scheme: light;
+  --color-brand: #00c950;
+  --color-brand-strong: #00b548;
   --color-app-bg: #f8fafc;
   --color-surface: #ffffff;
   --color-surface-muted: #f8fafc;
@@ -20,6 +22,8 @@
 
 [data-theme="dark"] {
   color-scheme: dark;
+  --color-brand: #22c55e;
+  --color-brand-strong: #16a34a;
   --color-app-bg: #0f172a;
   --color-surface: #111827;
   --color-surface-muted: #172033;
@@ -40,6 +44,7 @@ body {
   font-family: "Inter", sans-serif;
   background-color: var(--color-app-bg);
   color: var(--color-text);
+  line-height: 1.5;
 }
 
 body,
@@ -49,6 +54,11 @@ body,
 
 * {
   scrollbar-color: var(--color-border-strong) transparent;
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-brand) 22%, transparent);
 }
 
 [data-theme="dark"] .bg-white {

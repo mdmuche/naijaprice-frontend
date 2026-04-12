@@ -1,24 +1,57 @@
+import { AnimatePresence, motion } from "framer-motion";
 import AlertCard from "./AlertCard";
+import EmptyState from "./ui/EmptyState";
+import Skeleton from "./ui/Skeleton";
 
 function AlertList({ alerts, loading }) {
-  return loading ? (
-    <div className="p-10 text-center text-gray-400 animate-pulse">
-      Loading alerts...
-    </div>
-  ) : alerts && alerts.length > 0 ? (
+  const MotionItem = motion.div;
+
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        {[...Array(3)].map((_, index) => (
+          <div
+            key={index}
+            className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm"
+          >
+            <Skeleton className="h-5 w-2/3" />
+            <Skeleton className="mt-4 h-4 w-full" />
+            <Skeleton className="mt-2 h-4 w-5/6" />
+            <Skeleton className="mt-6 h-10 w-32" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (!alerts || alerts.length === 0) {
+    return (
+      <EmptyState
+        title="No nearby alerts yet"
+        description="When price movement is detected around your market, your alerts will appear here."
+      />
+    );
+  }
+
+  return (
     <div className="flex flex-col gap-4">
-      {alerts.map((alert) => (
-        <AlertCard
-          key={alert.id}
-          alertDesc={alert.alertDesc}
-          status={alert.status}
-          timeAgo={alert.timeAgo}
-        />
-      ))}
-    </div>
-  ) : (
-    <div className="p-10 text-center text-gray-400">
-      No nearby alerts found.
+      <AnimatePresence initial={false}>
+        {alerts.map((alert, index) => (
+          <MotionItem
+            key={alert.id}
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ delay: index * 0.04, duration: 0.22 }}
+          >
+            <AlertCard
+              alertDesc={alert.alertDesc}
+              status={alert.status}
+              timeAgo={alert.timeAgo}
+            />
+          </MotionItem>
+        ))}
+      </AnimatePresence>
     </div>
   );
 }
