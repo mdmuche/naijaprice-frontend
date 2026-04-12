@@ -23,6 +23,7 @@ function Alerts() {
   const [showSettings, setShowSettings] = useState(false);
   const [activeTab, setActiveTab] = useState("alerts");
   const [userMarket, setUserMarket] = useState(null);
+
   const user = useSelector((state) => state.user.profile);
   const tabs = user ? ["alerts", "predictions"] : ["alerts"];
   const [currentPage, setCurrentPage] = useState(0);
@@ -78,7 +79,7 @@ function Alerts() {
     (alert) => alert.market === userMarket,
   );
 
-  const totalPages = Math.ceil(nearbyAlerts.length / itemsPerPage);
+  const totalPages = Math.max(1, Math.ceil(nearbyAlerts.length / itemsPerPage));
   if (totalPages === 0) return null;
   const safePage = currentPage >= totalPages ? 0 : currentPage;
 
@@ -182,7 +183,7 @@ function Alerts() {
               {/* Tab Content */}
               {activeTab === "alerts" ? (
                 <div className="flex flex-col gap-6">
-                  <AlertList alerts={visibleAlerts} />
+                  <AlertList alerts={visibleAlerts} loading={false} />
                   {user && (
                     <div onClick={() => setIsAdding(true)}>
                       <Btn btnText="+ Set New Price Alert" />
