@@ -56,15 +56,6 @@ function NearByMarketList() {
         )}
       </div>
 
-      {totalPages > 1 && (
-        <Pagination
-          page={currentPage}
-          totalPages={totalPages}
-          onPrev={() => setCurrentPage((p) => p - 1)}
-          onNext={() => setCurrentPage((p) => p + 1)}
-          slider={true}
-        />
-      )}
       {/* 2. The Suggestion Action */}
       <div
         className="mt-2 cursor-pointer"
@@ -74,6 +65,15 @@ function NearByMarketList() {
           <Btn btnText={"+ Suggest a Market"} />
         </Link>
       </div>
+      {totalPages > 1 && (
+        <Pagination
+          page={currentPage}
+          totalPages={totalPages}
+          onPrev={() => setCurrentPage((p) => p - 1)}
+          onNext={() => setCurrentPage((p) => p + 1)}
+          slider={true}
+        />
+      )}
     </div>
   );
 }

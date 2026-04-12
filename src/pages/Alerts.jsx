@@ -183,6 +183,11 @@ function Alerts() {
               {activeTab === "alerts" ? (
                 <div className="flex flex-col gap-6">
                   <AlertList alerts={visibleAlerts} />
+                  {user && (
+                    <div onClick={() => setIsAdding(true)}>
+                      <Btn btnText="+ Set New Price Alert" />
+                    </div>
+                  )}
                   <Pagination
                     page={safePage}
                     totalPages={totalPages}
@@ -190,11 +195,6 @@ function Alerts() {
                     onPrev={() => setCurrentPage((p) => p - 1)}
                     slider={true}
                   />
-                  {user && (
-                    <div onClick={() => setIsAdding(true)}>
-                      <Btn btnText="+ Set New Price Alert" />
-                    </div>
-                  )}
                 </div>
               ) : (
                 <div className="bg-gray-50 p-6 rounded-3xl border-2 border-dashed border-gray-200">
