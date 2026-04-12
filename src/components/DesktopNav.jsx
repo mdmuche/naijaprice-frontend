@@ -9,6 +9,7 @@ import {
 import { Link, NavLink } from "react-router-dom";
 import { getUserToken } from "../utils/getUserToken";
 import { useSelector } from "react-redux";
+import ThemeToggle from "./theme/ThemeToggle";
 
 function DesktopNav() {
   const user = getUserToken();
@@ -20,13 +21,17 @@ function DesktopNav() {
         : "text-gray-600 hover:bg-gray-200"
     }`;
   return (
-    <nav className="hidden md:block fixed w-64 h-full bg-gray-100 p-4">
-      <Link to="/" className="flex gap-2 items-center p-2.5 w-full">
+    <nav className="hidden md:flex fixed h-full w-64 flex-col gap-4 bg-gray-100 p-4">
+      <Link to="/" className="flex w-full items-center gap-2 p-2.5">
         <img src="/images/logo.svg" alt="Logo" />
-        <h3 className="text-2xl font-bold">NaijaPrice</h3>
+        <h3 className="text-2xl font-bold text-gray-900">NaijaPrice</h3>
       </Link>
 
-      <ul>
+      <div className="flex justify-end">
+        <ThemeToggle />
+      </div>
+
+      <ul className="flex-1 space-y-1">
         <li>
           <NavLink to="/" className={navLinkClass}>
             <TrendingUp />

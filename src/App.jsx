@@ -5,8 +5,6 @@ import CreatePrice from "./pages/CreatePrice";
 import Alerts from "./pages/Alerts";
 import Profile from "./pages/Profile";
 import Market from "./pages/Market";
-
-import "./App.css";
 import Commodity from "./pages/Commodity";
 import SuggestMarket from "./pages/SuggestMarket";
 import AdminDashboard from "./pages/AdminDashboard";

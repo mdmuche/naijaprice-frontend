@@ -15,6 +15,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { logoutUser } from "../store/slices/userSlice";
+import ThemeToggle from "./theme/ThemeToggle";
 
 function MobileNav() {
   const [open, setOpen] = useState(false);
@@ -44,10 +45,12 @@ function MobileNav() {
           <img src="/images/logo.svg" alt="Logo" className="w-6 h-6" />
           <h3 className="font-bold text-lg">NaijaPrice</h3>
         </div>
-        {/* Hamburger */}
-        <button onClick={() => setOpen(!open)}>
-          {open ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle compact />
+          <button onClick={() => setOpen(!open)}>
+            {open ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
       {/* Dropdown Menu */}

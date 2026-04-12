@@ -1,9 +1,9 @@
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import NearbyMarketCard from "./NearbyMarketCard";
-import Btn from "./Btn";
 import Pagination from "./Pagination";
 import { useState } from "react";
+import Button from "./ui/Button";
 
 function NearByMarketList() {
   const navigate = useNavigate();
@@ -62,7 +62,7 @@ function NearByMarketList() {
         onClick={() => navigate("/suggest-market")}
       >
         <Link to={"/suggest-market"}>
-          <Btn btnText={"+ Suggest a Market"} />
+          <Button variant="text">+ Suggest a Market</Button>
         </Link>
       </div>
       {totalPages > 1 && (

@@ -1,9 +1,11 @@
-function Btn({ btnText }) {
+import Button from "./ui/Button";
+
+function Btn({ btnText, children, variant = "text", ...props }) {
   return (
     <div className="flex items-center justify-center">
-      <button className="text-[#00C950] font-bold text-[16px] cursor-pointer">
-        {btnText}
-      </button>
+      <Button variant={variant} {...props}>
+        {children || btnText}
+      </Button>
     </div>
   );
 }

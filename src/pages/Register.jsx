@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate, Link } from "react-router-dom";
-import Btn from "../components/Btn";
+import { useNavigate } from "react-router-dom";
+import AuthLayout from "../components/auth/AuthLayout";
+import FormField from "../components/forms/FormField";
+import Button from "../components/ui/Button";
 import { registerUser } from "../store/slices/userSlice";
-import Navigation from "../components/Navigation";
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -22,95 +23,58 @@ function Register() {
     navigate("/login");
   };
 
+  const handleFieldChange = (field) => (e) => {
+    setFormData((prev) => ({ ...prev, [field]: e.target.value }));
+  };
+
   return (
-    <div className="flex h-screen bg-gray-50">
-      <Navigation />
-      <div className="w-full flex flex-col gap-4 mt-14 lg:mt-0 md:ml-64 overflow-y-auto">
-        <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-white">
-          <div className="w-full max-w-md flex flex-col gap-6">
-            <div className="text-center">
-              <h1 className="text-3xl font-bold text-black">Create Account</h1>
-              <p className="text-gray-500 mt-2">
-                Join the community of market scouts
-              </p>
-            </div>
+    <AuthLayout
+      title="Create Account"
+      subtitle="Join the community of market scouts"
+      footerText="Already have an account?"
+      footerLinkTo="/login"
+      footerLinkLabel="Log In"
+    >
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <FormField
+          required
+          label="Full Name"
+          value={formData.name}
+          placeholder="e.g. John Doe"
+          onChange={handleFieldChange("name")}
+        />
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              {/* Full Name */}
-              <div className="flex flex-col gap-1">
-                <label className="text-sm font-bold">Full Name</label>
-                <input
-                  required
-                  className="p-3 border-2 border-gray-100 rounded-xl focus:border-[#00C950] outline-none transition-all"
-                  placeholder="e.g. John Doe"
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                />
-              </div>
+        <FormField
+          required
+          type="email"
+          label="Email Address"
+          value={formData.email}
+          placeholder="name@example.com"
+          onChange={handleFieldChange("email")}
+        />
 
-              {/* Email */}
-              <div className="flex flex-col gap-1">
-                <label className="text-sm font-bold">Email Address</label>
-                <input
-                  required
-                  type="email"
-                  className="p-3 border-2 border-gray-100 rounded-xl focus:border-[#00C950] outline-none transition-all"
-                  placeholder="name@example.com"
-                  onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
-                  }
-                />
-              </div>
+        <FormField
+          required
+          label="Location (City, State)"
+          value={formData.location}
+          placeholder="e.g. Minna, Niger"
+          onChange={handleFieldChange("location")}
+        />
 
-              {/* Location */}
-              <div className="flex flex-col gap-1">
-                <label className="text-sm font-bold">
-                  Location (City, State)
-                </label>
-                <input
-                  required
-                  className="p-3 border-2 border-gray-100 rounded-xl focus:border-[#00C950] outline-none transition-all"
-                  placeholder="e.g. Minna, Niger"
-                  onChange={(e) =>
-                    setFormData({ ...formData, location: e.target.value })
-                  }
-                />
-              </div>
+        <FormField
+          required
+          type="password"
+          label="Password"
+          value={formData.password}
+          placeholder="********"
+          onChange={handleFieldChange("password")}
+        />
 
-              {/* Password */}
-              <div className="flex flex-col gap-1">
-                <label className="text-sm font-bold">Password</label>
-                <input
-                  required
-                  type="password"
-                  className="p-3 border-2 border-gray-100 rounded-xl focus:border-[#00C950] outline-none transition-all"
-                  placeholder="••••••••"
-                  onChange={(e) =>
-                    setFormData({ ...formData, password: e.target.value })
-                  }
-                />
-              </div>
-
-              <div className="mt-4">
-                <Btn btnText="Register" type="submit" />
-              </div>
-            </form>
-
-            <p className="text-center text-sm text-gray-500">
-              Already have an account?{" "}
-              <Link
-                title="Login"
-                to="/login"
-                className="text-[#00C950] font-bold"
-              >
-                Log In
-              </Link>
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+        <Button type="submit" className="w-full">
+          Register
+        </Button>
+      </form>
+    </AuthLayout>
   );
 }
 

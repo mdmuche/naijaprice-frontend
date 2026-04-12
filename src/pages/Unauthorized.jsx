@@ -1,15 +1,20 @@
 import { Link } from "react-router-dom";
-import Btn from "../components/Btn";
+import AppShell from "../components/layout/AppShell";
+import Button from "../components/ui/Button";
 
 function Unauthorized() {
   return (
-    <div>
-      <h2>Access Denied 🚫</h2>
-      <p>You don’t have permission to view this page.</p>
-      <Link to={"/"}>
-        <Btn btnText={"Home"} />
-      </Link>
-    </div>
+    <AppShell contentClassName="flex min-h-screen items-center justify-center p-4">
+      <div className="max-w-md space-y-4 rounded-3xl border border-red-100 bg-white p-8 text-center shadow-sm">
+        <h1 className="text-2xl font-bold text-gray-900">Access Denied</h1>
+        <p className="text-sm text-gray-500">
+          You do not have permission to view this page.
+        </p>
+        <Link to="/" className="block">
+          <Button className="w-full">Home</Button>
+        </Link>
+      </div>
+    </AppShell>
   );
 }
 
