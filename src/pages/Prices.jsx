@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -16,6 +16,7 @@ import {
   FileChartColumn,
   MapPin,
   Search,
+  Star,
 } from "lucide-react";
 import Feed from "../components/Feed";
 import PriceChart from "../components/PriceChart";
@@ -31,6 +32,7 @@ import Button from "../components/ui/Button";
 import Card from "../components/ui/Card";
 import PageIntro from "../components/ui/PageIntro";
 import EmptyState from "../components/ui/EmptyState";
+import { allMarketsData } from "../utils/marketData";
 
 function Prices() {
   const MotionOverlay = motion.div;
@@ -46,6 +48,10 @@ function Prices() {
   const alerts = useSelector((state) => state.alerts.allAlerts);
   const unreadCount = alerts?.filter((alert) => !alert.read).length ?? 0;
 
+  // prefered marketslogic
+  const { profile } = useSelector((state) => state.user);
+  const preferredIds = profile?.preferredMarkets || [];
+
   const {
     commodities,
     activeCategory,
@@ -58,22 +64,70 @@ function Prices() {
 
   const latestReport = commodities[0];
 
-  const marketsList = [
-    { state: "Lagos", lga: "Kosofe", market: "Mile 12 Market" },
-    { state: "Lagos", lga: "Mushin", market: "Ojuwoye Market" },
-    { state: "Lagos", lga: "Ikeja", market: "Computer Village" },
-    { state: "Oyo", lga: "Ibadan North", market: "Bodija Market" },
-    { state: "Abuja", lga: "AMAC", market: "Wuse Market" },
-    { state: "Abuja", lga: "Gwagwalada", market: "Gwagwalada Market" },
-    { state: "Kano", lga: "Fagge", market: "Kantin Kwori" },
-    { state: "Rivers", lga: "Port Harcourt", market: "Oil Mill Market" },
-  ];
+  // const marketsList = [
+  //   {
+  //     id: "market_001",
+  //     state: "Lagos",
+  //     lga: "Kosofe",
+  //     market: "Mile 12 Market",
+  //   },
+  //   {
+  //     id: "market_002",
+  //     state: "Lagos",
+  //     lga: "Mushin",
+  //     market: "Ojuwoye Market",
+  //   },
+  //   {
+  //     id: "market_003",
+  //     state: "Lagos",
+  //     lga: "Ikeja",
+  //     market: "Computer Village",
+  //   },
+  //   {
+  //     id: "market_004",
+  //     state: "Oyo",
+  //     lga: "Ibadan North",
+  //     market: "Bodija Market",
+  //   },
+  //   {
+  //     id: "market_005",
+  //     state: "Abuja",
+  //     lga: "AMAC",
+  //     market: "Wuse Market",
+  //   },
+  //   {
+  //     id: "market_006",
+  //     state: "Abuja",
+  //     lga: "Gwagwalada",
+  //     market: "Gwagwalada Market",
+  //   },
+  //   {
+  //     id: "market_007",
+  //     state: "Kano",
+  //     lga: "Fagge",
+  //     market: "Kantin Kwori",
+  //   },
+  //   {
+  //     id: "market_008",
+  //     state: "Rivers",
+  //     lga: "Port Harcourt",
+  //     market: "Oil Mill Market",
+  //   },
+  // ];
 
-  const filteredMarkets = marketsList.filter(
-    (loc) =>
-      loc.market.toLowerCase().includes(locationSearch.toLowerCase()) ||
-      loc.state.toLowerCase().includes(locationSearch.toLowerCase()),
-  );
+  // We want to identify which markets in your list are the user's favorites
+  const enhancedMarkets = allMarketsData.map((m) => ({
+    ...m,
+    isPreferred: preferredIds.some((fav) => (fav.id || fav) === m.id),
+  }));
+
+  const sortedFilteredMarkets = [...enhancedMarkets]
+    .filter(
+      (loc) =>
+        loc.title.toLowerCase().includes(locationSearch.toLowerCase()) ||
+        loc.location.toLowerCase().includes(locationSearch.toLowerCase()),
+    )
+    .sort((a, b) => b.isPreferred - a.isPreferred);
 
   const allMarketItems = commodities
     .filter((item) => {
@@ -137,6 +191,37 @@ function Prices() {
     exit: { opacity: 0, scale: 0.98, y: 6 },
     transition: { duration: 0.2, ease: "easeOut" },
   };
+  useEffect(() => {
+    // 1. Check if the user has any preferred markets
+    if (preferredIds.length > 0) {
+      const favoriteId = preferredIds[0]; // Get the first favorite
+      const favoriteMarket = allMarketsData.find((m) => m.id === favoriteId);
+
+      if (favoriteMarket) {
+        dispatch(
+          setLocation({
+            id: favoriteMarket.id,
+            market: favoriteMarket.title,
+            state: favoriteMarket.location.split(", ")[1] || "",
+            lga: favoriteMarket.location.split(", ")[0] || "",
+          }),
+        );
+      }
+    } else {
+      // 2. Fallback to Mile 12 if no favorites exist
+      const mile12 = allMarketsData.find((m) => m.id === 1); // Assuming ID 1 is Mile 12
+      if (mile12) {
+        dispatch(
+          setLocation({
+            id: mile12.id,
+            market: mile12.title,
+            state: mile12.location.split(", ")[1],
+            lga: mile12.location.split(", ")[0],
+          }),
+        );
+      }
+    }
+  }, [preferredIds, dispatch]);
 
   return (
     <AppShell contentClassName="space-y-6 px-3 py-4 md:px-6 md:py-6">
@@ -144,10 +229,10 @@ function Prices() {
         title="Market Prices"
         subtitle="Track verified market movements, compare categories, and spot changes faster."
         action={
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-nowrap items-center gap-3">
             <Button
               variant="secondary"
-              className="rounded-full"
+              className="rounded-full whitespace-nowrap"
               onClick={() => setIsLocationOpen(true)}
             >
               <MapPin size={16} className="text-[#00C950]" />
@@ -171,7 +256,10 @@ function Prices() {
         }
       />
 
-      <Card className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between" padding="md">
+      <Card
+        className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
+        padding="md"
+      >
         <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
           <MapPin size={16} className="text-[#00C950]" />
           <span>
@@ -218,7 +306,9 @@ function Prices() {
 
         <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Browse reports</h2>
+            <h2 className="text-xl font-semibold text-gray-900">
+              Browse reports
+            </h2>
             <p className="text-sm text-gray-500">
               Showing {visibleItems.length} of {allMarketItems.length} items
             </p>
@@ -260,7 +350,9 @@ function Prices() {
 
         <Card className="space-y-5" padding="md">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Price Trends</h2>
+            <h2 className="text-xl font-semibold text-gray-900">
+              Price Trends
+            </h2>
             <p className="mt-1 text-sm text-gray-500">
               Quick market signals for {currentLocation.market}
             </p>
@@ -304,7 +396,9 @@ function Prices() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900">Reports Today</h3>
-                  <p className="text-sm text-gray-500">Verified market activity</p>
+                  <p className="text-sm text-gray-500">
+                    Verified market activity
+                  </p>
                 </div>
               </div>
               <div className="text-lg font-semibold text-gray-900">
@@ -373,7 +467,10 @@ function Prices() {
                 >
                   Reset
                 </Button>
-                <Button className="flex-1" onClick={() => setIsFilterOpen(false)}>
+                <Button
+                  className="flex-1"
+                  onClick={() => setIsFilterOpen(false)}
+                >
                   Apply
                 </Button>
               </div>
@@ -395,7 +492,9 @@ function Prices() {
               className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl"
             >
               <div className="mb-6 flex items-center justify-between">
-                <h3 className="text-xl font-bold text-gray-900">Select Market</h3>
+                <h3 className="text-xl font-bold text-gray-900">
+                  Select Market
+                </h3>
                 <button
                   type="button"
                   onClick={() => {
@@ -425,27 +524,45 @@ function Prices() {
                 </div>
 
                 <div className="max-h-60 space-y-2 overflow-y-auto pr-2">
-                  {filteredMarkets.length > 0 ? (
-                    filteredMarkets.map((loc, index) => (
+                  {sortedFilteredMarkets.length > 0 ? (
+                    sortedFilteredMarkets.map((loc) => (
                       <button
-                        key={index}
+                        key={loc.id}
                         type="button"
                         onClick={() => {
-                          dispatch(setLocation(loc));
-                          setCurrentPage(0);
+                          dispatch(
+                            setLocation({
+                              id: loc.id,
+                              market: loc.title,
+                              state: loc.location.split(", ")[1] || "",
+                              lga: loc.location.split(", ")[0] || "",
+                            }),
+                          );
                           setIsLocationOpen(false);
-                          setLocationSearch("");
                         }}
-                        className={`w-full rounded-2xl border p-4 text-left transition-colors ${
-                          currentLocation.market === loc.market
+                        className={`w-full rounded-2xl border p-4 text-left transition-all ${
+                          currentLocation.market === loc.title
                             ? "border-[#00C950] bg-green-50"
-                            : "border-gray-200 bg-white hover:bg-gray-50"
+                            : "border-gray-200 bg-white hover:border-gray-100"
                         }`}
                       >
-                        <p className="font-semibold text-gray-900">{loc.market}</p>
-                        <p className="text-xs text-gray-500">
-                          {loc.state}, {loc.lga}
-                        </p>
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <p className="font-semibold text-gray-900">
+                              {loc.title}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {loc.location}
+                            </p>
+                          </div>
+
+                          {/* This badge will only show if the ID match is successful */}
+                          {loc.isPreferred && (
+                            <div className="bg-[#00C950] text-white p-1 rounded-full">
+                              <Star size={12} fill="currentColor" />
+                            </div>
+                          )}
+                        </div>
                       </button>
                     ))
                   ) : (

@@ -45,6 +45,7 @@ const initialState = {
   sortBy: "latest",
   filterSource: "all",
   currentLocation: {
+    id: 1,
     state: "Lagos",
     lga: "Kosofe",
     market: "Mile 12 Market",

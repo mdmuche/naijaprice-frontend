@@ -31,7 +31,7 @@ const userSlice = createSlice({
 
       localStorage.setItem(DB_KEY, JSON.stringify(usersDb));
       localStorage.setItem(SESSION_KEY, JSON.stringify(newUser));
-      // Optional: if you still want to use a token for ProtectedRoute
+
       localStorage.setItem("naijaprice_user_token", "active_session_token");
 
       state.profile = newUser;
@@ -78,6 +78,39 @@ const userSlice = createSlice({
       );
       localStorage.setItem(DB_KEY, JSON.stringify(updatedDb));
     },
+    togglePreferredMarket: (state, action) => {
+      const marketId = action.payload;
+      if (!state.profile.preferredMarkets) {
+        state.profile.preferredMarkets = [];
+      }
+
+      const index = state.profile.preferredMarkets.indexOf(marketId);
+      if (index === -1) {
+        state.profile.preferredMarkets.push(marketId); // Add if not there
+      } else {
+        state.profile.preferredMarkets.splice(index, 1); // Remove if already there
+      }
+
+      // Persist the change to the "DB" and session
+      localStorage.setItem(
+        "naijaprice_current_session",
+        JSON.stringify(state.profile),
+      );
+      // Update permanent Users DB
+      const users = JSON.parse(
+        localStorage.getItem("naijaprice_users") || "[]",
+      );
+      const updatedUsers = users.map((u) =>
+        u.id === state.profile.id
+          ? { ...u, preferredMarkets: state.profile.preferredMarkets }
+          : u,
+      );
+      localStorage.setItem("naijaprice_users", JSON.stringify(updatedUsers));
+    },
+    updateProfile: (state, action) => {
+      state.profile = { ...state.profile, ...action.payload };
+      localStorage.setItem("userProfile", JSON.stringify(state.profile));
+    },
 
     updateProfilePic: (state, action) => {
       state.profile.profilePic = action.payload;
@@ -119,6 +152,7 @@ export const {
   registerUser,
   loginUser,
   verifyUserAsScout,
+  togglePreferredMarket,
 } = userSlice.actions;
 
 export default userSlice.reducer;
