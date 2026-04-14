@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -50,7 +50,9 @@ function Prices() {
 
   // prefered marketslogic
   const { profile } = useSelector((state) => state.user);
-  const preferredIds = profile?.preferredMarkets || [];
+  const preferredIds = useMemo(() => {
+    return profile?.preferredMarkets || [];
+  }, [profile?.preferredMarkets]); // Only recreate this array if the actual data in Redux changes
 
   const {
     commodities,
@@ -63,57 +65,6 @@ function Prices() {
   } = useSelector((state) => state.prices);
 
   const latestReport = commodities[0];
-
-  // const marketsList = [
-  //   {
-  //     id: "market_001",
-  //     state: "Lagos",
-  //     lga: "Kosofe",
-  //     market: "Mile 12 Market",
-  //   },
-  //   {
-  //     id: "market_002",
-  //     state: "Lagos",
-  //     lga: "Mushin",
-  //     market: "Ojuwoye Market",
-  //   },
-  //   {
-  //     id: "market_003",
-  //     state: "Lagos",
-  //     lga: "Ikeja",
-  //     market: "Computer Village",
-  //   },
-  //   {
-  //     id: "market_004",
-  //     state: "Oyo",
-  //     lga: "Ibadan North",
-  //     market: "Bodija Market",
-  //   },
-  //   {
-  //     id: "market_005",
-  //     state: "Abuja",
-  //     lga: "AMAC",
-  //     market: "Wuse Market",
-  //   },
-  //   {
-  //     id: "market_006",
-  //     state: "Abuja",
-  //     lga: "Gwagwalada",
-  //     market: "Gwagwalada Market",
-  //   },
-  //   {
-  //     id: "market_007",
-  //     state: "Kano",
-  //     lga: "Fagge",
-  //     market: "Kantin Kwori",
-  //   },
-  //   {
-  //     id: "market_008",
-  //     state: "Rivers",
-  //     lga: "Port Harcourt",
-  //     market: "Oil Mill Market",
-  //   },
-  // ];
 
   // We want to identify which markets in your list are the user's favorites
   const enhancedMarkets = allMarketsData.map((m) => ({
