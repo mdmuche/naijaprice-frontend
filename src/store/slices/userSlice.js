@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { getStoredUser } from "../../utils/getUser";
 
 const initialState = {
@@ -6,10 +6,53 @@ const initialState = {
   isAuthenticated: !!getStoredUser(),
   isAdmin: getStoredUser()?.role === "admin",
   usersList: JSON.parse(localStorage.getItem("naijaprice_users_db")) || [],
+  forgotPasswordStatus: "idle", // 'idle' | 'loading' | 'succeeded' | 'failed'
+  authError: null,
 };
 
 const SESSION_KEY = "naijaprice_current_session";
 const DB_KEY = "naijaprice_users_db";
+
+export const simulatePasswordReset = createAsyncThunk(
+  "user/simulatePasswordReset",
+  async (email, { rejectWithValue }) => {
+    // Simulate API delay
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    const usersDb = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+    const userExists = usersDb.find((u) => u.email === email);
+
+    if (!userExists) {
+      return rejectWithValue("No account found with that email address.");
+    }
+    return true;
+  },
+);
+export const simulateResetSubmit = createAsyncThunk(
+  "user/simulateResetSubmit",
+  async ({ email, newPassword }, { rejectWithValue }) => {
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      const usersDb =
+        JSON.parse(localStorage.getItem("naijaprice_users_db")) || [];
+      const userIndex = usersDb.findIndex((u) => u.email === email);
+
+      if (userIndex === -1) {
+        return rejectWithValue("User session expired or not found.");
+      }
+
+      // Update password in the "DB"
+      usersDb[userIndex].password = newPassword;
+      localStorage.setItem("naijaprice_users_db", JSON.stringify(usersDb));
+
+      return true;
+    } catch (err) {
+      console.error("Error: ", err);
+      return rejectWithValue("Failed to update password.");
+    }
+  },
+);
 
 const userSlice = createSlice({
   name: "user",
@@ -63,6 +106,27 @@ const userSlice = createSlice({
 
       localStorage.setItem(SESSION_KEY, JSON.stringify(adminUser));
       localStorage.setItem("naijaprice_user_token", "admin_session_token");
+    },
+    // Clear status when leaving the page
+    resetAuthStatus: (state) => {
+      state.forgotPasswordStatus = "idle";
+      state.authError = null;
+    },
+    updatePassword: (state, action) => {
+      const { email, newPassword } = action.payload;
+
+      // Update the user in the "database"
+      state.usersList = state.usersList.map((user) =>
+        user.email === email ? { ...user, password: newPassword } : user,
+      );
+
+      // Sync to LocalStorage
+      localStorage.setItem(
+        "naijaprice_users_db",
+        JSON.stringify(state.usersList),
+      );
+
+      state.forgotPasswordStatus = "idle"; // Reset for next time
     },
 
     setUserInfo: (state, action) => {
@@ -143,6 +207,23 @@ const userSlice = createSlice({
       localStorage.removeItem("naijaprice_user_token");
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(simulatePasswordReset.pending, (state) => {
+        state.forgotPasswordStatus = "loading";
+        state.authError = null;
+      })
+      .addCase(simulatePasswordReset.fulfilled, (state) => {
+        state.forgotPasswordStatus = "succeeded";
+      })
+      .addCase(simulatePasswordReset.rejected, (state, action) => {
+        state.forgotPasswordStatus = "failed";
+        state.authError = action.payload;
+      })
+      .addCase(simulateResetSubmit.fulfilled, (state) => {
+        state.forgotPasswordStatus = "reset_success";
+      });
+  },
 });
 
 export const {
@@ -153,6 +234,8 @@ export const {
   loginUser,
   verifyUserAsScout,
   togglePreferredMarket,
+  resetAuthStatus,
+  updatePassword,
 } = userSlice.actions;
 
 export default userSlice.reducer;

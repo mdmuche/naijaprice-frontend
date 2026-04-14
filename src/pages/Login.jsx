@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AuthLayout from "../components/auth/AuthLayout";
 import FormField from "../components/forms/FormField";
 import Button from "../components/ui/Button";
@@ -18,7 +18,8 @@ function Login() {
     e.preventDefault();
     setError("");
 
-    const usersDb = JSON.parse(localStorage.getItem("naijaprice_users_db")) || [];
+    const usersDb =
+      JSON.parse(localStorage.getItem("naijaprice_users_db")) || [];
     const user = usersDb.find(
       (entry) => entry.email === email && entry.password === password,
     );
@@ -64,6 +65,14 @@ function Login() {
           placeholder="********"
           onChange={(e) => setPassword(e.target.value)}
         />
+        <div className="flex justify-end mt-2">
+          <Link
+            to="/forgot-password"
+            className="text-sm font-semibold text-[#00C950] hover:underline"
+          >
+            Forgot password?
+          </Link>
+        </div>
 
         <Button type="submit" className="w-full">
           Log In
