@@ -14,7 +14,6 @@ import {
 import Navigation from "../components/Navigation";
 import Search from "../components/Search";
 import { useRef, useState, useEffect, useMemo } from "react";
-import { allMarketsData } from "../utils/marketData";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { addPriceReport } from "../store/slices/priceSlice";
@@ -27,6 +26,7 @@ function CreatePrice() {
   const user = useSelector((state) => state.user.profile);
   // --- REDUX & ROUTING ---
   const commodities = useSelector((state) => state.prices.commodities);
+  const { allMarkets } = useSelector((state) => state.markets);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -55,10 +55,10 @@ function CreatePrice() {
           const { latitude, longitude } = position.coords;
 
           // Haversine-adjacent calculation for closest market
-          let closest = allMarketsData[0];
+          let closest = allMarkets[0];
           let minDistance = Infinity;
 
-          allMarketsData.forEach((market) => {
+          allMarkets.forEach((market) => {
             const dist = Math.sqrt(
               Math.pow(market.coords[0] - latitude, 2) +
                 Math.pow(market.coords[1] - longitude, 2),
@@ -74,7 +74,7 @@ function CreatePrice() {
         (error) => {
           console.error("GPS Error:", error);
           setGpsError(true);
-          setSelectedMarket(allMarketsData[0]); // Fallback
+          setSelectedMarket(allMarkets[0]); // Fallback
         },
         { enableHighAccuracy: true, timeout: 5000 },
       );
@@ -272,7 +272,7 @@ function CreatePrice() {
                 Nearby Markets
               </div>
               <div className="max-h-60 overflow-y-auto">
-                {allMarketsData.map((m) => (
+                {allMarkets.map((m) => (
                   <div
                     key={m.id}
                     onClick={() => {

@@ -4,11 +4,15 @@ import AdminReviewCard from "../components/AdminReviewCard";
 import Navigation from "../components/Navigation";
 import { verifyUserAsScout } from "../store/slices/userSlice"; // Make sure to export this from your slice
 import { Award, Check } from "lucide-react";
+import Pagination from "../components/Pagination";
 
 function AdminDashboard() {
+  const [currentPage, setCurrentPage] = useState(0);
   const dispatch = useDispatch();
   const allUsers = useSelector((state) => state.user.usersList);
   const [activeTab, setActiveTab] = useState("markets"); // Toggle between markets and users
+
+  const itemsPerPage = 8;
 
   // 1. Grab market suggestions from Redux
   const pendingMarkets = useSelector(
@@ -16,10 +20,13 @@ function AdminDashboard() {
   );
 
   const scoutList = allUsers.filter((u) => u.role !== "admin");
-  console.log(scoutList);
   const handleVerify = (userId) => {
     dispatch(verifyUserAsScout(userId));
   };
+  const totalPages = Math.ceil(scoutList.length / itemsPerPage);
+  const safePage = currentPage >= totalPages ? 0 : currentPage;
+  const startIndex = safePage * itemsPerPage;
+  const visibleItems = scoutList.slice(startIndex, startIndex + itemsPerPage);
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -53,9 +60,16 @@ function AdminDashboard() {
               Market Suggestions
             </h2>
             {pendingMarkets.length > 0 ? (
-              pendingMarkets.map((market) => (
-                <AdminReviewCard key={market.id} market={market} />
-              ))
+              <div className="flex gap-4 overflow-x-auto pb-6 scrollbar-hide snap-x">
+                {pendingMarkets.map((market) => (
+                  <div
+                    key={market.id}
+                    className="min-w-[300px] md:min-w-[400px] snap-start"
+                  >
+                    <AdminReviewCard market={market} />
+                  </div>
+                ))}
+              </div>
             ) : (
               <div className="p-10 text-center bg-white rounded-3xl border-2 border-dashed">
                 <p className="text-gray-400">
@@ -86,7 +100,7 @@ function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {scoutList.map((user) => (
+                  {visibleItems.map((user) => (
                     <tr key={user.id} className="border-b last:border-none">
                       <td className="p-4">
                         <div className="flex items-center gap-3">
@@ -129,6 +143,13 @@ function AdminDashboard() {
                   ))}
                 </tbody>
               </table>
+              <Pagination
+                page={safePage}
+                totalPages={totalPages}
+                onPrev={() => setCurrentPage((prev) => prev - 1)}
+                onNext={() => setCurrentPage((prev) => prev + 1)}
+                slider={false}
+              />
             </div>
           </div>
         )}

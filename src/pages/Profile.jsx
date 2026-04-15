@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Camera, Check, Trophy, User } from "lucide-react";
 import ContributionCard from "../components/ContributionCard";
@@ -6,12 +6,16 @@ import RecentPriceCard from "../components/RecentPriceCard";
 import Settings from "../components/Settings";
 import AppShell from "../components/layout/AppShell";
 import { updateProfilePic } from "../store/slices/userSlice";
+import Pagination from "../components/Pagination";
 
 function Profile() {
+  const [currentPage, setCurrentPage] = useState(0);
   const dispatch = useDispatch();
   const fileInputRef = useRef(null);
   const user = useSelector((state) => state.user.profile);
   const allCommodities = useSelector((state) => state.prices.commodities);
+
+  const itemsPerPage = 8;
 
   const currentUserId = user?.id || null;
   const mySubmissions = currentUserId
@@ -52,6 +56,13 @@ function Profile() {
 
   if (!user) return <p>loading...</p>;
 
+  const totalPages = Math.ceil(mySubmissions.length / itemsPerPage);
+  const safePage = currentPage >= totalPages ? 0 : currentPage;
+  const startIndex = safePage * itemsPerPage;
+  const visibleItems = mySubmissions.slice(
+    startIndex,
+    startIndex + itemsPerPage,
+  );
   return (
     <AppShell contentClassName="flex flex-col gap-4">
       <input
@@ -107,7 +118,9 @@ function Profile() {
         <div className="flex flex-col items-start gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex w-full flex-col gap-4 lg:w-[60%]">
             <div className="w-full rounded-lg border-2 border-gray-200 bg-white p-2 shadow-md lg:p-4">
-              <h3 className="text-start text-lg font-bold">Contribution Stats</h3>
+              <h3 className="text-start text-lg font-bold">
+                Contribution Stats
+              </h3>
               <div className="flex flex-wrap items-start justify-between gap-2 sm:items-center">
                 {statusbar.map((stat) => (
                   <ContributionCard
@@ -125,9 +138,16 @@ function Profile() {
                 Recent Price Submissions
               </p>
               <div>
-                {mySubmissions.map((submission) => (
+                {visibleItems.map((submission) => (
                   <RecentPriceCard key={submission.id} {...submission} />
                 ))}
+                <Pagination
+                  page={safePage}
+                  totalPages={totalPages}
+                  onPrev={() => setCurrentPage((prev) => prev - 1)}
+                  onNext={() => setCurrentPage((prev) => prev + 1)}
+                  slider={true}
+                />
               </div>
             </div>
           </div>

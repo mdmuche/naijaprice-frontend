@@ -32,7 +32,6 @@ import Button from "../components/ui/Button";
 import Card from "../components/ui/Card";
 import PageIntro from "../components/ui/PageIntro";
 import EmptyState from "../components/ui/EmptyState";
-import { allMarketsData } from "../utils/marketData";
 
 function Prices() {
   const MotionOverlay = motion.div;
@@ -63,11 +62,13 @@ function Prices() {
     filterSource,
     currentLocation,
   } = useSelector((state) => state.prices);
+  const { allMarkets } = useSelector((state) => state.markets);
+  console.log(allMarkets);
 
   const latestReport = commodities[0];
 
   // We want to identify which markets in your list are the user's favorites
-  const enhancedMarkets = allMarketsData.map((m) => ({
+  const enhancedMarkets = allMarkets.map((m) => ({
     ...m,
     isPreferred: preferredIds.some((fav) => (fav.id || fav) === m.id),
   }));
@@ -146,7 +147,7 @@ function Prices() {
     // 1. Check if the user has any preferred markets
     if (preferredIds.length > 0) {
       const favoriteId = preferredIds[0]; // Get the first favorite
-      const favoriteMarket = allMarketsData.find((m) => m.id === favoriteId);
+      const favoriteMarket = allMarkets.find((m) => m.id === favoriteId);
 
       if (favoriteMarket) {
         dispatch(
@@ -160,7 +161,7 @@ function Prices() {
       }
     } else {
       // 2. Fallback to Mile 12 if no favorites exist
-      const mile12 = allMarketsData.find((m) => m.id === 1); // Assuming ID 1 is Mile 12
+      const mile12 = allMarkets.find((m) => m.id === 1); // Assuming ID 1 is Mile 12
       if (mile12) {
         dispatch(
           setLocation({

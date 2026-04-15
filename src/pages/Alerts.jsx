@@ -11,7 +11,6 @@ import SettingsPage from "../components/Settings";
 import Btn from "../components/Btn";
 import BtnSecondary from "../components/BtnSecondary";
 import AppShell from "../components/layout/AppShell";
-import { allMarketsData } from "../utils/marketData";
 import { INITIAL_ALERTS } from "../utils/alertsData";
 import { useSelector } from "react-redux";
 import Pagination from "../components/Pagination";
@@ -174,6 +173,7 @@ function Alerts() {
   const [activeTab, setActiveTab] = useState("alerts");
   const [userMarket, setUserMarket] = useState(null);
   const user = useSelector((state) => state.user.profile);
+  const { allMarkets } = useSelector((state) => state.markets);
   const [currentPage, setCurrentPage] = useState(0);
   const tabs = user ? ["alerts", "predictions"] : ["alerts"];
 
@@ -182,7 +182,7 @@ function Alerts() {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          const marketsWithDistance = allMarketsData.map((market) => ({
+          const marketsWithDistance = allMarkets.map((market) => ({
             ...market,
             distance: calculateDistance(
               latitude,
@@ -206,7 +206,9 @@ function Alerts() {
 
   const localAlerts = getLocalAlerts();
   const alertItems = [...alerts, ...localAlerts];
-  const nearbyAlerts = alertItems.filter((alert) => alert.market === userMarket);
+  const nearbyAlerts = alertItems.filter(
+    (alert) => alert.market === userMarket,
+  );
   const totalPages = Math.max(
     1,
     Math.ceil(nearbyAlerts.length / ITEMS_PER_PAGE),

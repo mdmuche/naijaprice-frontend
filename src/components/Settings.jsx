@@ -13,19 +13,23 @@ import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../store/slices/userSlice";
 import { togglePreferredMarket } from "../store/slices/userSlice";
 import { useState } from "react";
-import { allMarketsData } from "../utils/marketData";
 import EditProfile from "./EditProfile";
 import NotificationsView from "./NotificationsView";
 import OfflineDataView from "./OfflineData";
 import AboutView from "./AboutView";
 import LanguagesView from "./LanguagesView";
+import Pagination from "./Pagination";
 
 function Settings({ className }) {
   const [showMarketSelector, setShowMarketSelector] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const { allMarkets } = useSelector((state) => state.markets);
   const [activeTab, setActiveTab] = useState("profile");
+  const [currentPage, setCurrentPage] = useState(0);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const itemsPerPage = 5;
 
   const { profile } = useSelector((state) => state.user);
   // Get preferred IDs from profile (default to empty array)
@@ -73,6 +77,12 @@ function Settings({ className }) {
       icon: <CircleAlert size={16} />,
     },
   ];
+
+  const totalPages = Math.ceil(allMarkets.length / itemsPerPage);
+  const safePage = currentPage >= totalPages ? 0 : currentPage;
+  const startIndex = safePage * itemsPerPage;
+  const visibleItems = allMarkets.slice(startIndex, startIndex + itemsPerPage);
+
   return (
     <div
       className={`${className} flex flex-col p-2 gap-10 border-2 border-gray-200 sm:p-4`}
@@ -169,7 +179,7 @@ function Settings({ className }) {
             </div>
 
             <div className="flex flex-col gap-3">
-              {allMarketsData.map((market) => (
+              {visibleItems.map((market) => (
                 <div
                   key={market.id}
                   onClick={() => handleToggle(market.id)}
@@ -196,6 +206,13 @@ function Settings({ className }) {
                   </div>
                 </div>
               ))}
+              <Pagination
+                page={safePage}
+                totalPages={totalPages}
+                onPrev={() => setCurrentPage((prev) => prev - 1)}
+                onNext={() => setCurrentPage((prev) => prev + 1)}
+                slider={true}
+              />
             </div>
           </div>
         </div>
