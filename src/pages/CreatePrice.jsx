@@ -19,6 +19,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { addPriceReport } from "../store/slices/priceSlice";
 import { newDate } from "../utils/monthDate";
+import { addAlert } from "../store/slices/alertSlice";
+import { timeAgo } from "../utils/timeAgo";
 
 function CreatePrice() {
   // 1. Get the logged-in user's profile
@@ -159,6 +161,51 @@ function CreatePrice() {
     };
     setIsSubmitting(true);
     dispatch(addPriceReport(reportData));
+
+    const otherPrices = commodities
+      .filter((c) => c.title === selectedItem.title)
+      .map((c) => c.price);
+
+    const isBestPrice =
+      otherPrices.length > 0 && Number(price) < Math.min(...otherPrices);
+
+    // 2. Determine Final Status Priority
+    let alertStatus = "stable";
+    const absoluteChange = Math.abs(trendPercentage);
+
+    if (isBestPrice) {
+      alertStatus = "best"; // "Best" takes priority as it's the biggest highlight
+    } else if (absoluteChange >= 50) {
+      alertStatus = "anomaly";
+    } else if (trendDir === "up") {
+      alertStatus = "rise";
+    } else if (trendDir === "down") {
+      alertStatus = "drop";
+    }
+
+    // 3. Format Description
+    const priceFormatted = Number(price).toLocaleString();
+    let description = "";
+
+    if (alertStatus === "best") {
+      description = `Best Price Found! ${selectedItem.title} (${unit}) is only ₦${priceFormatted} at ${selectedMarket.title}.`;
+    } else if (alertStatus === "anomaly") {
+      description = `Anomally: ${selectedItem.title} shifted by ${absoluteChange}%`;
+    } else {
+      const trendSign = trendDir === "up" ? "up" : "down";
+      description = `${selectedItem.title} (${unit}) ${trendDir === "up" ? "rose" : "dropped"} to ₦${priceFormatted} - ${trendSign} ${absoluteChange}%`;
+    }
+
+    const reportAlert = {
+      id: Date.now(), // Unique numeric-style ID
+      market: selectedMarket.title,
+      alertDesc: description,
+      status: alertStatus,
+      read: false,
+      timeAgo: timeAgo(Date.now),
+    };
+
+    dispatch(addAlert(reportAlert));
     setTimeout(() => {
       navigate("/");
     }, 2000);

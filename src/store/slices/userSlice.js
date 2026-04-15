@@ -1,17 +1,23 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { getStoredUser } from "../../utils/getUser";
 
+const SESSION_KEY = "naijaprice_current_session";
+const DB_KEY = "naijaprice_users_db";
+
 const initialState = {
-  profile: getStoredUser(),
+  profile: getStoredUser()
+    ? { ...getStoredUser(), notifications: getStoredUser().notifications || [] }
+    : null,
   isAuthenticated: !!getStoredUser(),
   isAdmin: getStoredUser()?.role === "admin",
-  usersList: JSON.parse(localStorage.getItem("naijaprice_users_db")) || [],
+  usersList:
+    JSON.parse(localStorage.getItem(DB_KEY))?.map((u) => ({
+      ...u,
+      notifications: u.notifications || [],
+    })) || [],
   forgotPasswordStatus: "idle", // 'idle' | 'loading' | 'succeeded' | 'failed'
   authError: null,
 };
-
-const SESSION_KEY = "naijaprice_current_session";
-const DB_KEY = "naijaprice_users_db";
 
 export const simulatePasswordReset = createAsyncThunk(
   "user/simulatePasswordReset",

@@ -14,10 +14,6 @@ function NearByMarketList() {
     (state) => state.markets,
   );
 
-  // useEffect(() => {
-  //   setCurrentPage(0);
-  // }, [searchQuery]);
-
   if (!userLocation) {
     return (
       <div className="p-10 text-center animate-pulse text-gray-400 font-medium">

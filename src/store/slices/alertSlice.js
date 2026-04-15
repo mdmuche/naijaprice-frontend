@@ -4,7 +4,8 @@ import { INITIAL_ALERTS } from "../../utils/alertsData";
 const alertsSlice = createSlice({
   name: "alerts",
   initialState: {
-    allAlerts: INITIAL_ALERTS,
+    allAlerts:
+      JSON.parse(localStorage.getItem("naijaprice_alerts")) || INITIAL_ALERTS,
   },
   reducers: {
     addAlert: (state, action) => {

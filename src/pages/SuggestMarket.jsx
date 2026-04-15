@@ -9,8 +9,28 @@ import { addMarketSuggestion } from "../store/slices/suggestionSlice";
 function SuggestMarket() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { userLocation } = useSelector((state) => state.markets);
+  const { userLocation, allMarkets } = useSelector((state) => state.markets);
 
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Radius of the Earth in kilometers
+
+    // Convert degrees to radians
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * (Math.PI / 180)) *
+        Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c;
+
+    // Return formatted string for UI (e.g., "5.4")
+    return distance.toFixed(1);
+  };
   const [formData, setFormData] = useState({
     formName: "",
     formArea: "",
@@ -24,26 +44,76 @@ function SuggestMarket() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!formData.formName || !formData.formArea) {
       alert("Please fill all fields");
       return;
     }
 
-    dispatch(
-      addMarketSuggestion({
-        id: `suggested-${Date.now()}`,
+    // 1. Get User's Current Location (No hardcoding)
+    const getUserLocation = () => {
+      return new Promise((resolve, reject) => {
+        if (userLocation?.lat) {
+          resolve([userLocation.lat, userLocation.lng]);
+        } else if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => resolve([pos.coords.latitude, pos.coords.longitude]),
+            () => reject("Please enable location to suggest a market."),
+          );
+        } else {
+          reject("Location services not supported.");
+        }
+      });
+    };
+    try {
+      const userCoords = await getUserLocation();
+
+      // 2. Duplicate Check
+      const marketExists = allMarkets.find(
+        (s) =>
+          s.title.toLowerCase().trim() ===
+          formData.formName.toLowerCase().trim(),
+      );
+
+      if (marketExists) {
+        return alert("This market has already been suggested!");
+      }
+
+      // 3. Set Market Coordinates (Using User location as anchor)
+      const marketLat = userCoords[0] + (Math.random() - 0.5) * 0.005;
+      const marketLng = userCoords[1] + (Math.random() - 0.5) * 0.005;
+
+      // 4. Calculate Distance
+      const distValue = calculateDistance(
+        userCoords[0],
+        userCoords[1],
+        marketLat,
+        marketLng,
+      );
+
+      // 5. Construct Metrics-Compliant Object
+      const suggestionData = {
+        id: Date.now(),
         title: formData.formName,
         location: formData.formArea,
-        coords: userLocation ? [userLocation.lat, userLocation.lng] : [0, 0],
-        status: "pending",
+        coords: [marketLat, marketLng],
+        distance: `${distValue} km away`,
+        rawDist: parseFloat(distValue),
+        reports: 0,
+        status: "pending", // Will be "active" once verified by admin
+        lastUpdated: "Just now",
         createdAt: new Date().toISOString(),
-      }),
-    );
+      };
 
-    alert("Thank you! Market suggested for verification.");
-    navigate("/markets");
+      dispatch(addMarketSuggestion(suggestionData));
+
+      alert("Success! Market suggested for verification.");
+      navigate("/markets");
+    } catch (error) {
+      alert(error);
+    }
   };
 
   return (
