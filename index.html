@@ -6,6 +6,36 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>naijaprice</title>
+    <script>
+      (function() {
+        try {
+          // Check your specific localStorage key
+          const savedTheme = localStorage.getItem('naijaprice_theme');
+          const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          
+          // Determine the final theme
+          const targetTheme = savedTheme === 'light' ? 'light' : (savedTheme === 'dark' || supportDarkMode ? 'dark' : 'dark');
+
+          // Apply the attribute and background color BEFORE the page draws
+          document.documentElement.setAttribute('data-theme', targetTheme);
+          document.documentElement.style.backgroundColor = targetTheme === 'dark' ? '#0f172a' : '#f8fafc';
+        } catch (e) {}
+      })();
+    </script>
+
+    <style>
+      /* Prevent white flash of the body tag specifically */
+      html[data-theme="dark"], 
+      html[data-theme="dark"] body {
+        background-color: #0f172a !important;
+        color-scheme: dark;
+      }
+      html[data-theme="light"], 
+      html[data-theme="light"] body {
+        background-color: #f8fafc !important;
+        color-scheme: light;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
