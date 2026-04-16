@@ -41,6 +41,7 @@ function CreatePrice() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [price, setPrice] = useState("");
   const [unit, setUnit] = useState("Bag");
+  const [item, setItem] = useState("");
   const [preview, setPreview] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -117,8 +118,16 @@ function CreatePrice() {
   };
 
   const handleSubmit = () => {
-    if (!selectedItem || !price || !selectedMarket)
-      return alert("Missing fields");
+    if (!selectedItem || !price || !selectedMarket || !preview) {
+      if (!selectedItem) return alert("Please select a commodity item.");
+      if (!price) return alert("Please enter the current price.");
+      if (!selectedMarket) return alert("Please select or detect a market.");
+      if (!preview)
+        return alert(
+          "Please upload a photo as proof to earn points and verify the price.",
+        );
+      return;
+    }
 
     // 1. Calculate Trend by comparing to the existing Redux state
     const previousReport = commodities.find(
@@ -143,12 +152,13 @@ function CreatePrice() {
 
     // 2. Construct the object to match your CommodityCard requirements
     const reportData = {
-      id: `rep-${Date.now()}`,
+      id: Date.now(),
       userId: user.id,
       title: selectedItem.title,
       category: selectedCategory,
       market: selectedMarket.title,
       price: Number(price),
+      unit: item,
       // CRITICAL: Card uses 'snippet' for the subtitle (e.g., "1 Bag")
       snippet: `${unit}`,
       // CRITICAL: Use the path from the selected item if no new photo was taken
@@ -193,7 +203,7 @@ function CreatePrice() {
       description = `Anomally: ${selectedItem.title} shifted by ${absoluteChange}%`;
     } else {
       const trendSign = trendDir === "up" ? "up" : "down";
-      description = `${selectedItem.title} (${unit}) ${trendDir === "up" ? "rose" : "dropped"} to ₦${priceFormatted} - ${trendSign} ${absoluteChange}%`;
+      description = `${selectedItem.title} (${unit}) ${trendDir === "up" ? "rise" : "drop"} to ₦${priceFormatted} - ${trendSign} ${absoluteChange}%`;
     }
 
     const reportAlert = {
@@ -414,6 +424,7 @@ function CreatePrice() {
                 </div>
               </div>
 
+              {/* Price  */}
               <div>
                 <h3 className="text-lg font-bold text-gray-800 mb-4">
                   3. Current Price
@@ -432,6 +443,24 @@ function CreatePrice() {
                 </div>
                 <p className="text-xs text-gray-400 mt-2 italic">
                   Enter the price per {unit} today.
+                </p>
+              </div>
+              {/* Unit */}
+              <div>
+                <h3 className="text-lg font-bold text-gray-800 mb-4">
+                  4. Unit of {unit}
+                </h3>
+                <div>
+                  <input
+                    type="text"
+                    value={item}
+                    onChange={(e) => setItem(e.target.value)}
+                    placeholder={`1 ${unit}`}
+                    className="flex-1 h-14 text-2xl font-bold border-b-2 border-gray-100 focus:border-[#00C950] outline-none transition-all placeholder:text-gray-200"
+                  />
+                </div>
+                <p className="text-xs text-gray-400 mt-2 italic">
+                  Enter Unit(s) of {unit} today.
                 </p>
               </div>
             </div>

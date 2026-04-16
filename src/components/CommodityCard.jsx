@@ -8,10 +8,14 @@ function CommodityCard({ item }) {
   const MotionImage = motion.img;
   const isPriceRising = item.trendDirection === "up";
   const priceLabel = `N${Math.round(item.price).toLocaleString()}`;
-
+  console.log(item);
   return (
     <Link to={`/commodities/${item.id}`} className="block">
-      <Card interactive className="relative h-full overflow-hidden" padding="sm">
+      <Card
+        interactive
+        className="relative h-full overflow-hidden"
+        padding="sm"
+      >
         <MotionImage
           whileHover={{ scale: 1.03 }}
           transition={{ duration: 0.24 }}
@@ -36,8 +40,12 @@ function CommodityCard({ item }) {
 
         <div className="mt-4 flex items-start justify-between gap-3">
           <div className="space-y-1">
-            <h3 className="text-lg font-semibold text-gray-900">{item.title}</h3>
-            <p className="text-xs text-gray-500">{item.snippet}</p>
+            <h3 className="text-lg font-semibold text-gray-900">
+              {item.title}
+            </h3>
+            <p className="text-xs text-gray-500">
+              {item.snippet} ~{item.unit}
+            </p>
           </div>
 
           {item.trend !== 0 && (
