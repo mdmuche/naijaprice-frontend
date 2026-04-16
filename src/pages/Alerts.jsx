@@ -4,6 +4,7 @@ import {
   MapPin,
   Activity,
   ArrowLeft,
+  ChevronRight,
 } from "lucide-react";
 import AlertList from "../components/Alerts";
 import AddAlertForm from "../components/AddAlertForm";
@@ -172,10 +173,17 @@ function Alerts() {
   const [showSettings, setShowSettings] = useState(false);
   const [activeTab, setActiveTab] = useState("alerts");
   const [userMarket, setUserMarket] = useState(null);
+  const [isChanging, setIsChanging] = useState(false);
   const user = useSelector((state) => state.user.profile);
   const { allMarkets } = useSelector((state) => state.markets);
   const [currentPage, setCurrentPage] = useState(0);
   const tabs = user ? ["alerts", "predictions"] : ["alerts"];
+
+  const handleMarketChange = (marketTitle) => {
+    setUserMarket(marketTitle);
+    setIsChanging(false);
+    setCurrentPage(0); // Reset pagination when market changes
+  };
 
   useEffect(() => {
     if ("geolocation" in navigator) {
@@ -260,6 +268,39 @@ function Alerts() {
           />
         ) : (
           <>
+            <button
+              onClick={() => setIsChanging(!isChanging)}
+              className="w-fit text-[#00C950] font-semibold text-sm hover:underline px-4 py-2 rounded-lg bg-white border border-[#00C950]/20 transition-all mb-2"
+            >
+              {isChanging ? "Cancel" : "Change Market"}
+            </button>
+
+            {/* MARKET SELECTOR OVERLAY */}
+            {isChanging && (
+              <div className="w-full mb-2 bg-white border border-gray-200 rounded-xl shadow-2xl z-[100] p-2">
+                <div className="p-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                  Nearby Markets
+                </div>
+                <div className="max-h-60 overflow-y-auto">
+                  {allMarkets.map((m) => (
+                    <div
+                      key={m.id}
+                      onClick={() => handleMarketChange(m.title)} // UPDATED THIS
+                      className="flex items-center justify-between p-3 hover:bg-[#00C950]/5 rounded-lg cursor-pointer group"
+                    >
+                      <div>
+                        <p className="font-bold text-gray-700 group-hover:text-[#00C950]">
+                          {m.title}
+                        </p>
+                        <p className="text-xs text-gray-400">{m.location}</p>
+                      </div>
+                      <ChevronRight size={16} className="text-gray-300" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <AlertsTabs
               tabs={tabs}
               activeTab={activeTab}
