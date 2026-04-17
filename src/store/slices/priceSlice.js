@@ -89,6 +89,8 @@ const priceSlice = createSlice({
       // so it shows up as the "Latest" reportconst newReport = {
       const newReport = {
         ...action.payload,
+        status: "pending",
+        source: "crowdsourced",
         createdAt: new Date().toISOString(),
       };
       state.commodities.unshift(newReport);
@@ -98,7 +100,31 @@ const priceSlice = createSlice({
         "naijaprice_commodities",
         JSON.stringify(userReportsOnly),
       );
-      // console.log("current: ", current(state.commodities));
+    },
+    verifyPriceReport: (state, action) => {
+      const reportId = action.payload;
+      const report = state.commodities.find((c) => c.id === reportId);
+      if (report) {
+        report.status = "approved";
+        report.source = "verified";
+      }
+      // Update LocalStorage
+      const userReportsOnly = state.commodities.filter((item) => item.userId);
+      localStorage.setItem(
+        "naijaprice_commodities",
+        JSON.stringify(userReportsOnly),
+      );
+    },
+    rejectPriceReport: (state, action) => {
+      const reportId = action.payload;
+      state.commodities = state.commodities.filter((c) => c.id !== reportId);
+
+      // Update LocalStorage
+      const userReportsOnly = state.commodities.filter((item) => item.userId);
+      localStorage.setItem(
+        "naijaprice_commodities",
+        JSON.stringify(userReportsOnly),
+      );
     },
     setTrendTimeframe: (state, action) => {
       state.trendTimeframe = action.payload;
@@ -120,6 +146,8 @@ export const {
   setLocation,
   setTrendTimeframe,
   addPriceReport,
+  verifyPriceReport,
+  rejectPriceReport,
 } = priceSlice.actions;
 
 export default priceSlice.reducer;
