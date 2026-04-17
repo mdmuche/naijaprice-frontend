@@ -1,8 +1,24 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { getStoredUser } from "../../utils/getUser";
+import { initialUsers } from "../../utils/initialData";
 
 const SESSION_KEY = "naijaprice_current_session";
 const DB_KEY = "naijaprice_users_db";
+
+const getMergedUsers = () => {
+  const localDb = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+
+  // Use a Map to filter by ID so we don't get duplicates
+  const combined = [...initialUsers, ...localDb];
+  const uniqueUsers = Array.from(
+    new Map(combined.map((u) => [u.id, u])).values(),
+  );
+
+  return uniqueUsers.map((u) => ({
+    ...u,
+    notifications: u.notifications || [],
+  }));
+};
 
 const initialState = {
   profile: getStoredUser()
@@ -10,11 +26,7 @@ const initialState = {
     : null,
   isAuthenticated: !!getStoredUser(),
   isAdmin: getStoredUser()?.role === "admin",
-  usersList:
-    JSON.parse(localStorage.getItem(DB_KEY))?.map((u) => ({
-      ...u,
-      notifications: u.notifications || [],
-    })) || [],
+  usersList: getMergedUsers(),
   forgotPasswordStatus: "idle", // 'idle' | 'loading' | 'succeeded' | 'failed'
   authError: null,
 };
@@ -75,12 +87,10 @@ const userSlice = createSlice({
           action.payload.email === "admin@naijaprice.com" ? "admin" : "user",
       };
 
-      const usersDb = JSON.parse(localStorage.getItem(DB_KEY)) || [];
-      usersDb.push(newUser);
+      state.usersList.push(newUser);
 
-      localStorage.setItem(DB_KEY, JSON.stringify(usersDb));
+      localStorage.setItem(DB_KEY, JSON.stringify(state.usersList));
       localStorage.setItem(SESSION_KEY, JSON.stringify(newUser));
-
       localStorage.setItem("naijaprice_user_token", "active_session_token");
 
       state.profile = newUser;
@@ -141,12 +151,11 @@ const userSlice = createSlice({
       // Update Session
       localStorage.setItem(SESSION_KEY, JSON.stringify(state.profile));
 
-      // Update Database so changes persist after logout
-      const usersDb = JSON.parse(localStorage.getItem(DB_KEY)) || [];
-      const updatedDb = usersDb.map((u) =>
+      // Sync the usersList in state and LS
+      state.usersList = state.usersList.map((u) =>
         u.id === state.profile.id ? state.profile : u,
       );
-      localStorage.setItem(DB_KEY, JSON.stringify(updatedDb));
+      localStorage.setItem(DB_KEY, JSON.stringify(state.usersList));
     },
     togglePreferredMarket: (state, action) => {
       const marketId = action.payload;
@@ -166,16 +175,12 @@ const userSlice = createSlice({
         "naijaprice_current_session",
         JSON.stringify(state.profile),
       );
-      // Update permanent Users DB
-      const users = JSON.parse(
-        localStorage.getItem("naijaprice_users") || "[]",
-      );
-      const updatedUsers = users.map((u) =>
+      state.usersList = state.usersList.map((u) =>
         u.id === state.profile.id
           ? { ...u, preferredMarkets: state.profile.preferredMarkets }
           : u,
       );
-      localStorage.setItem("naijaprice_users", JSON.stringify(updatedUsers));
+      localStorage.setItem(DB_KEY, JSON.stringify(state.usersList));
     },
     updateProfile: (state, action) => {
       state.profile = { ...state.profile, ...action.payload };
@@ -189,11 +194,10 @@ const userSlice = createSlice({
       localStorage.setItem(SESSION_KEY, JSON.stringify(state.profile));
 
       // Update Database
-      const usersDb = JSON.parse(localStorage.getItem(DB_KEY)) || [];
-      const updatedDb = usersDb.map((u) =>
-        u.id === state.profile.id ? state.profile : u,
+      state.usersList = state.usersList.map((u) =>
+        u.id === state.profile.id ? { ...u, profilePic: action.payload } : u,
       );
-      localStorage.setItem(DB_KEY, JSON.stringify(updatedDb));
+      localStorage.setItem(DB_KEY, JSON.stringify(state.usersList));
     },
 
     verifyUserAsScout: (state, action) => {
@@ -203,7 +207,7 @@ const userSlice = createSlice({
           ? { ...user, isVerifiedUser: true, role: "scout" }
           : user,
       );
-      const DB_KEY = "naijaprice_users_db";
+      // Sync to LS
       localStorage.setItem(DB_KEY, JSON.stringify(state.usersList));
     },
     logoutUser: (state) => {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import AuthLayout from "../components/auth/AuthLayout";
 import FormField from "../components/forms/FormField";
@@ -13,14 +13,12 @@ function Login() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const usersList = useSelector((state) => state.user.usersList);
   const handleLogin = (e) => {
     e.preventDefault();
     setError("");
 
-    const usersDb =
-      JSON.parse(localStorage.getItem("naijaprice_users_db")) || [];
-    const user = usersDb.find(
+    const user = usersList.find(
       (entry) => entry.email === email && entry.password === password,
     );
 

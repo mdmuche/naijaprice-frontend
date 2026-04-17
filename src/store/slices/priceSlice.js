@@ -3,39 +3,22 @@ import { commoditiesData } from "../../utils/CommoditiesData";
 import { generateTrendsFromHistory } from "../../utils/trendUtils";
 import { priceHistory } from "../../utils/priceHistoryData";
 
-/**
- * HELPER: Generates mock historical data for the Chart based on
- * the items actually present in the selected market.
- */
-// const generateMarketTrends = (commodities, marketName) => {
-//   const marketItems = commodities
-//     .filter((item) => item.market === marketName)
-//     .slice(0, 5); // Limits to 5 items to keep the chart readable
-
-//   if (marketItems.length === 0) return [];
-
-//   const days = ["Day 1", "Day 10", "Day 20", "Day 30"];
-
-//   return days.map((day, index) => {
-//     const dataPoint = { day };
-//     marketItems.forEach((item) => {
-//       // Logic: Simulate a price trend that fluctuates but ends near the current price
-//       const fluctuation = 1 + Math.sin(index + item.id) * 0.06;
-//       const key = item.title.toLowerCase();
-//       dataPoint[key] = Math.round(item.price * fluctuation);
-//     });
-//     return dataPoint;
-//   });
-// };
+const DB_KEY = "naijaprice_commodities";
 
 const getInitialCommodities = () => {
-  const savedReports = localStorage.getItem("naijaprice_commodities");
+  const savedReports = localStorage.getItem(DB_KEY);
   const parsedReports = savedReports ? JSON.parse(savedReports) : [];
 
-  /** * We spread parsedReports first so that user-added items
-   * appear at the top, followed by the default commoditiesData.
-   */
-  return [...parsedReports, ...commoditiesData];
+  // Combine LocalStorage reports and Default Data
+  const combined = [...parsedReports, ...commoditiesData];
+
+  // deduplicate by ID: This ensures that if an item is in both,
+  // it only appears once.
+  const uniqueCommodities = Array.from(
+    new Map(combined.map((item) => [item.id, item])).values(),
+  );
+
+  return uniqueCommodities;
 };
 
 const initialState = {
@@ -89,17 +72,15 @@ const priceSlice = createSlice({
       // so it shows up as the "Latest" reportconst newReport = {
       const newReport = {
         ...action.payload,
+        id: action.payload.id || Date.now(),
         status: "pending",
         source: "crowdsourced",
         createdAt: new Date().toISOString(),
       };
       state.commodities.unshift(newReport);
-      const userReportsOnly = state.commodities.filter((item) => item.userId);
 
-      localStorage.setItem(
-        "naijaprice_commodities",
-        JSON.stringify(userReportsOnly),
-      );
+      const userReportsOnly = state.commodities.filter((item) => item.userId);
+      localStorage.setItem(DB_KEY, JSON.stringify(userReportsOnly));
     },
     verifyPriceReport: (state, action) => {
       const reportId = action.payload;
@@ -110,10 +91,7 @@ const priceSlice = createSlice({
       }
       // Update LocalStorage
       const userReportsOnly = state.commodities.filter((item) => item.userId);
-      localStorage.setItem(
-        "naijaprice_commodities",
-        JSON.stringify(userReportsOnly),
-      );
+      localStorage.setItem(DB_KEY, JSON.stringify(userReportsOnly));
     },
     rejectPriceReport: (state, action) => {
       const reportId = action.payload;
@@ -121,10 +99,7 @@ const priceSlice = createSlice({
 
       // Update LocalStorage
       const userReportsOnly = state.commodities.filter((item) => item.userId);
-      localStorage.setItem(
-        "naijaprice_commodities",
-        JSON.stringify(userReportsOnly),
-      );
+      localStorage.setItem(DB_KEY, JSON.stringify(userReportsOnly));
     },
     setTrendTimeframe: (state, action) => {
       state.trendTimeframe = action.payload;
