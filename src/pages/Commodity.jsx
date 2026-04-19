@@ -6,6 +6,7 @@ import PricePerMarketList from "../components/PricePerMarketList";
 import { useState } from "react";
 import { priceHistory } from "../utils/priceHistoryData";
 import AppShell from "../components/layout/AppShell";
+import { initialReports } from "../utils/initialData";
 
 function Commodity() {
   const { id } = useParams();
@@ -14,7 +15,7 @@ function Commodity() {
     JSON.parse(localStorage.getItem("naijaprice_commodities")) || [];
 
   // 2. Combine the static priceHistory with the local data
-  const allItems = [...priceHistory, ...localData];
+  const allItems = [...priceHistory, ...initialReports, ...localData];
 
   const commodityData = allItems.find((item) => String(item.id) === String(id));
 
@@ -51,7 +52,10 @@ function Commodity() {
           </div>
 
           <div className="flex flex-col items-center p-4">
-            <div key={commodityData.id} className="flex flex-col items-center gap-2">
+            <div
+              key={commodityData.id}
+              className="flex flex-col items-center gap-2"
+            >
               <div className="flex items-center gap-2">
                 <img
                   className="h-12.5 w-12.5 rounded-lg object-cover"

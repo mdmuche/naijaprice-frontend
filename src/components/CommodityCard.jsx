@@ -8,7 +8,7 @@ function CommodityCard({ item }) {
   const MotionImage = motion.img;
   const isPriceRising = item.trendDirection === "up";
   const priceLabel = `N${Math.round(item.price).toLocaleString()}`;
-  console.log(item);
+
   return (
     <Link to={`/commodities/${item.id}`} className="block">
       <Card

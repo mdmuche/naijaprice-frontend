@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Camera, Check, Trophy, User } from "lucide-react";
 import ContributionCard from "../components/ContributionCard";
@@ -8,6 +8,9 @@ import AppShell from "../components/layout/AppShell";
 import { updateProfilePic } from "../store/slices/userSlice";
 import Pagination from "../components/Pagination";
 
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+const SEVEN_DAYS_AGO_STATIC = Date.now() - 7 * MS_PER_DAY;
+
 function Profile() {
   const [currentPage, setCurrentPage] = useState(0);
   const dispatch = useDispatch();
@@ -15,24 +18,41 @@ function Profile() {
   const user = useSelector((state) => state.user.profile);
   const allCommodities = useSelector((state) => state.prices.commodities);
 
-  const itemsPerPage = 8;
+  const itemsPerPage = 5;
 
-  const currentUserId = user?.id || null;
-  const mySubmissions = currentUserId
-    ? allCommodities.filter((item) => item.userId === currentUserId)
-    : [];
+  const mySubmissions = useMemo(() => {
+    const currentUserId = user?.id || null;
+    if (!currentUserId) return [];
+
+    // This calculation is now "stable" for this render
+
+    return allCommodities
+      .filter((item) => {
+        const isOwner = item.userId === currentUserId;
+        // Check if the item's ID (timestamp) is within the last 7 days
+        const itemDate = item.createdAt ? Date.parse(item.createdAt) : 0;
+        const isRecent = itemDate > SEVEN_DAYS_AGO_STATIC;
+        return isOwner && isRecent;
+      })
+      .sort((a, b) => {
+        const dateA = a.createdAt ? Date.parse(a.createdAt) : 0;
+        const dateB = b.createdAt ? Date.parse(b.createdAt) : 0;
+        return dateB - dateA;
+      });
+  }, [allCommodities, user?.id]);
+
   const verifiedCount = mySubmissions.filter(
-    (submission) => submission.status === "Verified",
+    (submission) => submission.status.toLowerCase() === "verified",
   ).length;
   const rejectedCount = mySubmissions.filter(
-    (submission) => submission.status === "Rejected",
+    (submission) => submission.status.toLowerCase() === "rejected",
   ).length;
+  console.log(verifiedCount, rejectedCount);
   const finalizedCount = verifiedCount + rejectedCount;
   const accuracy =
     finalizedCount > 0
       ? Math.round((verifiedCount / finalizedCount) * 100)
       : 100;
-
   const statusbar = [
     { title: "Price Submitted", value: mySubmissions.length, center: false },
     { title: "Verified", value: verifiedCount, center: false },

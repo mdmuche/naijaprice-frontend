@@ -1,5 +1,4 @@
 export const allMarketsData = [
-  // LAGOS AREA
   {
     id: 1,
     title: "Mile 12 Market",
@@ -9,21 +8,21 @@ export const allMarketsData = [
   },
   {
     id: 2,
-    title: "Oyingbo Market",
-    location: "Ebute Metta, Lagos",
+    title: "Agege Market",
+    location: "Agege, Lagos",
     coords: [6.4698, 3.3852],
     status: "active",
   },
   {
     id: 3,
-    title: "Computer Village",
+    title: "Agbalata Market Badagry",
     location: "Ikeja, Lagos",
     coords: [6.5966, 3.337],
     status: "active",
   },
   {
     id: 4,
-    title: "Balogun Market",
+    title: "Alaba international market",
     location: "Lagos Island",
     coords: [6.4549, 3.3884],
     status: "active",
@@ -37,56 +36,53 @@ export const allMarketsData = [
   },
   {
     id: 6,
-    title: "Alaba International",
+    title: "Aratumi Market",
     location: "Ojo, Lagos",
     coords: [6.4633, 3.1901],
     status: "quiet",
   },
 
-  // ABEOKUTA / OGUN
   {
     id: 7,
-    title: "Kuto Market",
+    title: "Epe Fish Market",
     location: "Abeokuta, Ogun",
     coords: [7.1475, 3.3614],
     status: "active",
   },
 
-  // IBADAN AREA
   {
     id: 8,
-    title: "Bodija Market",
-    location: "Ibadan North, Oyo",
+    title: "Iyana-Iba Market",
+    location: "Ojo, Lagos",
     coords: [7.435, 3.9143],
     status: "active",
   },
   {
     id: 9,
-    title: "Dugbe Market",
-    location: "Ibadan NW, Oyo",
+    title: "Ikotun Market",
+    location: "Alimosho, Lagos",
     coords: [7.3875, 3.8764],
     status: "active",
   },
 
-  // ABUJA AREA
   {
     id: 10,
-    title: "Wuse Market",
-    location: "Wuse, Abuja",
+    title: "Igando Market",
+    location: "Alimosho, Lagos",
     coords: [9.0611, 7.458],
     status: "active",
   },
   {
     id: 11,
-    title: "Garki Model Market",
-    location: "Garki, Abuja",
+    title: "Ladipo Market",
+    location: "Mushin, Lagos",
     coords: [9.0333, 7.4833],
     status: "active",
   },
   {
     id: 12,
-    title: "Utako Market",
-    location: "Utako, Abuja",
+    title: "Idumota Market",
+    location: "Idumota, Lagos",
     coords: [9.0667, 7.4333],
     status: "active",
   },

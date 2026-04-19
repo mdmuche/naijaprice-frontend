@@ -63,7 +63,6 @@ function Prices() {
     currentLocation,
   } = useSelector((state) => state.prices);
   const { allMarkets } = useSelector((state) => state.markets);
-  console.log(allMarkets);
 
   const latestReport = commodities[0];
 

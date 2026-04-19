@@ -1,24 +1,31 @@
 import { Box, Check, Clock, X } from "lucide-react";
+import { newDate } from "../utils/monthDate";
 
-function RecentPriceCard({ title, snippet, price, date, status }) {
-  console.log(title, snippet, price, date, status);
+function RecentPriceCard({ title, snippet, price, createdAt, status }) {
   return (
-    <div className="w-full flex flex-col gap-2 items-start p-2 shadow-md border-gray-200 sm:flex-row sm:items-center sm:justify-between mt-4 sm:shadow-none sm:p-0">
-      <div className="w-full sm:w-[40%] flex items-start justify-between sm:items-center sm:gap-2">
-        <Box size={16} />
-        <div>
-          <h3 className="text-lg font-bold text-end">{title}</h3>
-          <p className="text-gray-600 text-[14px]">{snippet}</p>
+    <div className="mt-4 flex w-full flex-col items-start gap-3 border-gray-200 p-2 shadow-md sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:p-0 sm:shadow-none">
+      <div className="flex w-full items-start gap-3 sm:w-[40%] sm:items-center">
+        <div className="mt-1 shrink-0 sm:mt-0">
+          <Box size={16} />
+        </div>
+        <div className="min-w-0">
+          <h3 className="text-lg font-bold">{title}</h3>
+          <p className="text-[14px] text-gray-600">{snippet}</p>
         </div>
       </div>
-      <div className="w-full sm:w-[55%] flex justify-between items-center">
-        <div className="flex justify-between items-center mt-2">
+
+      <div className="flex w-full items-center justify-between gap-3 sm:w-[55%]">
+        <div className="mt-2 flex items-center sm:mt-0">
           <span className="text-lg font-bold">₦{price.toLocaleString()}</span>
         </div>
-        <p className="text-gray-500 text-[12px] mt-2">{date}</p>
-        <div className="flex items-center gap-2 mt-2">
+
+        <p className="mt-2 text-[12px] text-gray-500 sm:mt-0">
+          {newDate(createdAt)}
+        </p>
+
+        <div className="mt-2 flex items-center gap-2 sm:mt-0">
           <span
-            className={`px-2 py-1 rounded-full text-[12px] font-semibold flex gap-1 ${
+            className={`flex items-center gap-1 rounded-full px-2 py-1 text-[12px] font-semibold ${
               status.toLowerCase() === "verified"
                 ? " text-[#00C950]"
                 : status.toLowerCase() === "pending"
@@ -26,8 +33,8 @@ function RecentPriceCard({ title, snippet, price, date, status }) {
                   : "text-red-500"
             }`}
           >
-            {status === "Verified" ? (
-              <div className="w-fit border border-[#00C950] rounded-full">
+            {status.toLowerCase() === "verified" ? (
+              <div className="w-fit rounded-full border border-[#00C950]">
                 <Check size={16} />
               </div>
             ) : status.toLowerCase() === "pending" ? (

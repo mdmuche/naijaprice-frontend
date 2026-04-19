@@ -196,7 +196,7 @@ function AdminDashboard() {
                 totalPages={totalPages}
                 onPrev={() => setCurrentPage((prev) => prev - 1)}
                 onNext={() => setCurrentPage((prev) => prev + 1)}
-                slider={false}
+                slider={true}
               />
             </div>
           </div>

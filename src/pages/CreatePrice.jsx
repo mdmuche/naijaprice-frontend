@@ -137,6 +137,7 @@ function CreatePrice() {
 
     let trendPercentage = 0;
     let trendDir = "neutral";
+    const staticId = `${selectedMarket.title.replace(/\s+/g, "-").toLowerCase()}-${selectedItem.title.toLowerCase()}-${unit.replace(/\s+/g, "-").toLowerCase()}`;
 
     if (previousReport && previousReport.price > 0) {
       const oldPrice = previousReport.price;
@@ -152,7 +153,7 @@ function CreatePrice() {
 
     // 2. Construct the object to match your CommodityCard requirements
     const reportData = {
-      id: Date.now(),
+      id: staticId,
       userId: user.id,
       title: selectedItem.title,
       category: selectedCategory,

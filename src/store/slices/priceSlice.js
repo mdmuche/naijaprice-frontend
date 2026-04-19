@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { commoditiesData } from "../../utils/CommoditiesData";
 import { generateTrendsFromHistory } from "../../utils/trendUtils";
 import { priceHistory } from "../../utils/priceHistoryData";
+import { initialReports } from "../../utils/initialData";
 
 const DB_KEY = "naijaprice_commodities";
 
@@ -10,7 +11,7 @@ const getInitialCommodities = () => {
   const parsedReports = savedReports ? JSON.parse(savedReports) : [];
 
   // Combine LocalStorage reports and Default Data
-  const combined = [...parsedReports, ...commoditiesData];
+  const combined = [...parsedReports, ...initialReports, ...commoditiesData];
 
   // deduplicate by ID: This ensures that if an item is in both,
   // it only appears once.
@@ -86,11 +87,14 @@ const priceSlice = createSlice({
       const reportId = action.payload;
       const report = state.commodities.find((c) => c.id === reportId);
       if (report) {
-        report.status = "approved";
+        report.status = "verified";
         report.source = "verified";
       }
       // Update LocalStorage
-      const userReportsOnly = state.commodities.filter((item) => item.userId);
+      const userReportsOnly = state.commodities.filter(
+        (item) => item.userId && item.source !== "initial",
+      );
+
       localStorage.setItem(DB_KEY, JSON.stringify(userReportsOnly));
     },
     rejectPriceReport: (state, action) => {
