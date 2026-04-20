@@ -31,10 +31,10 @@ export const INITIAL_ALERTS = [
     timeAgo: "Yesterday",
     read: false,
   },
-  // --- Food-Focused Computer Village Alerts ---
+  // --- Food-Focused Agbalata Market Badagry Alerts ---
   {
     id: 5,
-    market: "Computer Village",
+    market: "Agbalata Market Badagry",
     alertDesc:
       "Carton of Indomie (Hungry Man) dropped to ₦12,500 at Ikeja Plaza",
     status: "drop",
@@ -43,7 +43,7 @@ export const INITIAL_ALERTS = [
   },
   {
     id: 6,
-    market: "Computer Village",
+    market: "Agbalata Market Badagry",
     alertDesc:
       "Fresh Titus Fish ₦2,500 per kilo - best price in the Ikeja axis",
     status: "best",
@@ -52,7 +52,7 @@ export const INITIAL_ALERTS = [
   },
   {
     id: 7,
-    market: "Computer Village",
+    market: "Agbalata Market Badagry",
     alertDesc:
       "Anomaly: Loaf of Bread reported at ₦3,500 - suspected price gouging near Underbridge",
     status: "anomally",
@@ -61,7 +61,7 @@ export const INITIAL_ALERTS = [
   },
   {
     id: 8,
-    market: "Computer Village",
+    market: "Agbalata Market Badagry",
     alertDesc:
       "Soft Drink crates rose 12% due to supply chain issues at the park",
     status: "rise",
