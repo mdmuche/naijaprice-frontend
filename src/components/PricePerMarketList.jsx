@@ -2,12 +2,13 @@ import PricePerMarketCard from "./PricePerMarketCard";
 import { priceHistory } from "../utils/priceHistoryData";
 import { useState } from "react";
 import Pagination from "./Pagination";
+import { initialReports } from "../utils/initialData";
 
 function PricePerMarketList({ activeMarket, onMarketSelect, commodityTitle }) {
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 3;
-
-  const filtered = priceHistory.filter(
+  const allItems = [...initialReports, ...priceHistory];
+  const filtered = allItems.filter(
     (p) => p.title.toLowerCase() === commodityTitle.toLowerCase(),
   );
   // pagination logic
@@ -38,6 +39,7 @@ function PricePerMarketList({ activeMarket, onMarketSelect, commodityTitle }) {
             trend={item.trend}
             trendDirection={item.trendDirection}
             source={item.source}
+            timeAgo={item.createdAt}
             // Comparison for the active state
             isActive={activeMarket === item.market}
             // Function to change the active state

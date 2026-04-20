@@ -3,13 +3,14 @@ import { useState, useMemo } from "react";
 import CommodityTrendChart from "./CommodityTrendChart";
 import { priceHistory } from "../utils/priceHistoryData";
 import EmptyState from "./ui/EmptyState";
+import { initialReports } from "../utils/initialData";
+
+const allReports = [...priceHistory, ...initialReports];
 
 function PriceHistory({ selectedCommodity }) {
   const [range, setRange] = useState(30);
 
   // Select the commodities array from your priceSlice
-  const allReports = priceHistory;
-
   const chartData = useMemo(() => {
     if (!selectedCommodity?.title || !selectedCommodity?.market) return [];
 
@@ -41,7 +42,7 @@ function PriceHistory({ selectedCommodity }) {
         price: item.price,
       }))
       .reverse();
-  }, [allReports, selectedCommodity, range]);
+  }, [selectedCommodity, range]);
 
   if (!selectedCommodity) {
     return (

@@ -1,4 +1,5 @@
 import { MapPin, ArrowUp, ArrowDown, Check } from "lucide-react";
+import { newDate } from "../utils/monthDate";
 
 function PricePerMarketCard({
   market,
@@ -7,6 +8,7 @@ function PricePerMarketCard({
   trend,
   trendDirection,
   source,
+  timeAgo,
   isActive,
   onClick,
 }) {
@@ -46,12 +48,12 @@ function PricePerMarketCard({
             trendDirection === "up" ? "text-red-500" : "text-[#00C950]"
           }`}
         >
-          <span>{trend}%</span>
-          {trendDirection === "up" ? (
+          {trend > 0 && <span>{trend}%</span>}
+          {trend > 0 && trendDirection === "up" ? (
             <ArrowUp size={14} />
-          ) : (
+          ) : trend > 0 && trendDirection === "down" ? (
             <ArrowDown size={14} />
-          )}
+          ) : null}
         </div>
       </div>
 
@@ -68,7 +70,7 @@ function PricePerMarketCard({
           {source || "Crowdsourced"}
         </div>
         <span className="text-[11px] text-gray-400 font-medium">
-          Updated recently
+          {newDate(timeAgo)}
         </span>
       </div>
     </div>

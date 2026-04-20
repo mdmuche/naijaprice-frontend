@@ -3,19 +3,22 @@ import BtnSecondary from "../components/BtnSecondary";
 import { useParams } from "react-router-dom";
 import PriceHistory from "../components/PriceHistory";
 import PricePerMarketList from "../components/PricePerMarketList";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { priceHistory } from "../utils/priceHistoryData";
 import AppShell from "../components/layout/AppShell";
 import { initialReports } from "../utils/initialData";
+import { timeAgo } from "../utils/TimeAgo";
+
+// 1. Get dynamic items from localStorage (or Redux if you're using it)
+const localData =
+  JSON.parse(localStorage.getItem("naijaprice_commodities")) || [];
+
+const allItems = [...priceHistory, ...initialReports, ...localData];
 
 function Commodity() {
   const { id } = useParams();
-  // 1. Get dynamic items from localStorage (or Redux if you're using it)
-  const localData =
-    JSON.parse(localStorage.getItem("naijaprice_commodities")) || [];
 
   // 2. Combine the static priceHistory with the local data
-  const allItems = [...priceHistory, ...initialReports, ...localData];
 
   const commodityData = allItems.find((item) => String(item.id) === String(id));
 
@@ -32,7 +35,22 @@ function Commodity() {
     market: activeMarket,
   };
 
-  // if (!commodityData) return <div>Loading...</div>;
+  const previousReport = useMemo(() => {
+    if (!commodityData) return null;
+
+    return allItems
+      .filter(
+        (item) =>
+          item.title === commodityData.title &&
+          item.market === activeMarket &&
+          item.id !== commodityData.id, // Exclude the current one
+      )
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0]; // Get the newest of the rest
+  }, [allItems, commodityData, activeMarket]);
+
+  const timeLabel = previousReport
+    ? timeAgo(previousReport.createdAt)
+    : "previous";
 
   return (
     <AppShell contentClassName="flex flex-col gap-4 p-2 sm:p-4">
@@ -90,7 +108,7 @@ function Commodity() {
                   }`}
                 >
                   <span className="mr-2">{commodityData.trend}%</span>
-                  vs yesterday
+                  vs {timeLabel}
                 </div>
               </div>
             </div>
