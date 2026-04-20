@@ -40,7 +40,7 @@ function PricePerMarketCard({
 
       {/* Middle Row: Location & Trend */}
       <div className="flex items-center justify-between">
-        <span className="text-sm text-gray-500 truncate max-w-[180px]">
+        <span className="text-sm text-gray-500 truncate max-w-45">
           {location || "Lagos, Nigeria"}
         </span>
         <div

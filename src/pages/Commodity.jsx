@@ -46,7 +46,7 @@ function Commodity() {
           item.id !== commodityData.id, // Exclude the current one
       )
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0]; // Get the newest of the rest
-  }, [allItems, commodityData, activeMarket]);
+  }, [commodityData, activeMarket]);
 
   const timeLabel = previousReport
     ? timeAgo(previousReport.createdAt)
