@@ -179,37 +179,8 @@ function Prices() {
 
   return (
     <AppShell contentClassName="space-y-6 px-3 py-4 md:px-6 md:py-6">
-      <PageIntro
-        title="Market Prices"
-        subtitle="Track verified market movements, compare categories, and spot changes faster."
-        action={
-          <div className="flex flex-nowrap items-center gap-3">
-            <Button
-              variant="secondary"
-              className="rounded-full whitespace-nowrap"
-              onClick={() => setIsLocationOpen(true)}
-            >
-              <MapPin size={16} className="text-[#00C950]" />
-              {currentLocation.market}
-            </Button>
-            <div
-              className="relative cursor-pointer rounded-full border border-gray-200 bg-white p-3 shadow-sm"
-              onClick={() => {
-                dispatch(markAllAsRead());
-                navigate("/alerts");
-              }}
-            >
-              <Bell size={18} />
-              {unreadCount > 0 && (
-                <span className="absolute -right-1 -top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white">
-                  {unreadCount}
-                </span>
-              )}
-            </div>
-          </div>
-        }
-      />
-
+      {" "}
+      {/* --- LOCATION STATUS CARD --- */}
       <Card
         className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
         padding="md"
@@ -238,7 +209,52 @@ function Prices() {
           )}
         </div>
       </Card>
+      {/* --- HERO SECTION --- */}
+      <div className="relative mb-8 overflow-hidden rounded-[40px] border border-gray-100 bg-white px-6 py-16 text-center shadow-sm">
+        {/* Soft background glow effects */}
+        <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#00C950]/5 blur-3xl"></div>
+        <div className="absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-[#00C950]/5 blur-3xl"></div>
 
+        <div className="relative z-10 flex flex-col items-center">
+          <h1 className="mb-4 text-3xl font-black tracking-tight text-gray-900 sm:text-5xl">
+            Nigeria's Real-Time{" "}
+            <span className="text-[#00C950]">Food Price</span> Tracker
+          </h1>
+
+          <p className="mb-10 max-w-2xl text-base font-medium text-gray-400 sm:text-lg leading-relaxed">
+            Track, compare, and verify food prices across markets — so you
+            always buy at the right price.
+          </p>
+
+          <div className="flex flex-col-reverse sm:flex-row items-center gap-4">
+            {/* Primary Action Button */}
+            <button
+              onClick={() => setIsLocationOpen(true)}
+              className="flex items-center gap-2 rounded-full bg-[#00C950] px-4 sm:px-8 py-4 text-lg font-bold text-white shadow-[0_10px_20px_rgba(0,201,80,0.3)] transition-all hover:scale-105 active:scale-95"
+            >
+              <MapPin className="hidden sm:block" size={20} />
+              Check Prices Near You
+            </button>
+
+            {/* Notification Bell with markAllAsRead logic */}
+            <div
+              onClick={() => {
+                dispatch(markAllAsRead());
+                navigate("/alerts");
+              }}
+              className="relative cursor-pointer rounded-full bg-[#1A1F2C] p-4 text-white shadow-lg transition-transform hover:scale-110"
+            >
+              <Bell size={24} />
+              {unreadCount > 0 && (
+                <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold ring-4 ring-[#1A1F2C]">
+                  {unreadCount}
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* --- CATEGORIES & SEARCH CARD --- */}
       <Card className="space-y-5" padding="md">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
           <ul className="flex flex-wrap gap-2">
@@ -296,9 +312,7 @@ function Prices() {
           </div>
         </div>
       </Card>
-
       <Feed items={visibleItems} />
-
       <div className="grid gap-6 px-4 xl:grid-cols-[1.1fr_0.9fr]">
         <PriceChart className="w-full" />
 
@@ -362,7 +376,6 @@ function Prices() {
           </div>
         </Card>
       </div>
-
       <AnimatePresence>
         {isFilterOpen && (
           <MotionOverlay
@@ -453,11 +466,10 @@ function Prices() {
           </MotionOverlay>
         )}
       </AnimatePresence>
-
       <AnimatePresence>
         {isLocationOpen && (
           <MotionOverlay
-            className="fixed inset-0 z-[110] flex items-center justify-center bg-black/60 p-4 backdrop-blur-md"
+            className="fixed inset-0 z-110 flex items-center justify-center bg-black/60 p-4 backdrop-blur-md"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
