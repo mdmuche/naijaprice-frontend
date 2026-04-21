@@ -11,12 +11,15 @@ import {
 import {
   ArrowDownUp,
   Bell,
+  CircleCheck,
   CirclePlus,
   Clock,
   FileChartColumn,
+  Layers,
   MapPin,
   Search,
   Star,
+  Users,
 } from "lucide-react";
 import Feed from "../components/Feed";
 import PriceChart from "../components/PriceChart";
@@ -363,7 +366,7 @@ function Prices() {
       <AnimatePresence>
         {isFilterOpen && (
           <MotionOverlay
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+            className="fixed inset-0 z-100 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -385,23 +388,44 @@ function Prices() {
                     SOURCE
                   </p>
                   <div className="grid grid-cols-3 gap-2">
-                    {["all", "verified", "crowdsourced"].map((src) => (
-                      <button
-                        key={src}
-                        type="button"
-                        onClick={() => {
-                          dispatch(setFilterSource(src));
-                          setCurrentPage(0);
-                        }}
-                        className={`rounded-2xl border px-3 py-2 text-xs font-bold capitalize transition-colors ${
-                          filterSource === src
-                            ? "border-[#00C950] bg-[#00C950] text-white"
-                            : "border-gray-200 bg-white text-gray-500 hover:bg-gray-50"
-                        }`}
-                      >
-                        {src}
-                      </button>
-                    ))}
+                    {["all", "verified", "crowdsourced"].map((src) => {
+                      const Icon =
+                        src === "verified"
+                          ? CircleCheck
+                          : src === "crowdsourced"
+                            ? Users
+                            : Layers; // Fallback icon for "all"
+
+                      return (
+                        <button
+                          key={src}
+                          type="button"
+                          onClick={() => {
+                            dispatch(setFilterSource(src));
+                            setCurrentPage(0);
+                          }}
+                          className={`flex items-center justify-center gap-1.5 rounded-2xl border px-3 py-2 text-xs font-bold capitalize transition-colors ${
+                            filterSource === src
+                              ? "border-[#00C950] bg-[#00C950] text-white"
+                              : "border-gray-200 bg-white text-gray-500 hover:bg-gray-50"
+                          }`}
+                        >
+                          {/* Icon: Only visible on small screens */}
+                          <span className="sm:hidden">
+                            <Icon size={14} />
+                          </span>
+
+                          {/* Text: Only visible on small screens for "all", or larger screens for everything */}
+                          <span
+                            className={
+                              src === "all" ? "block" : "hidden sm:block"
+                            }
+                          >
+                            {src}
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               </div>

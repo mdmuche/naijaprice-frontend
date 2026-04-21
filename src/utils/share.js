@@ -3,7 +3,7 @@ export const handleGeneralShare = async ({ title, market, price, id }) => {
   const shareData = {
     title: `Price Update: ${title}`,
     text: `Check out the current price of ${title} at ${market}. ${priceSentence}`,
-    url: `${window.location.origin}/commodity/${id}`,
+    url: `${window.location.origin}/commodities/${id}`,
   };
 
   try {
