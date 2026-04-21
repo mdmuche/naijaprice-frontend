@@ -210,7 +210,7 @@ function Alerts() {
         },
       );
     }
-  }, []);
+  }, [allMarkets]);
 
   const localAlerts = getLocalAlerts();
   const alertItems = [...alerts, ...localAlerts];
@@ -277,7 +277,7 @@ function Alerts() {
 
             {/* MARKET SELECTOR OVERLAY */}
             {isChanging && (
-              <div className="w-full mb-2 bg-white border border-gray-200 rounded-xl shadow-2xl z-[100] p-2">
+              <div className="w-full mb-2 bg-white border border-gray-200 rounded-xl shadow-2xl z-100 p-2">
                 <div className="p-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
                   Nearby Markets
                 </div>
