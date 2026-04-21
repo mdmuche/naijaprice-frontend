@@ -47,7 +47,6 @@ function Profile() {
   const rejectedCount = mySubmissions.filter(
     (submission) => submission.status.toLowerCase() === "rejected",
   ).length;
-  console.log(verifiedCount, rejectedCount);
   const finalizedCount = verifiedCount + rejectedCount;
   const accuracy =
     finalizedCount > 0

@@ -115,7 +115,7 @@ const commodityBlueprints = [
     category: "Vegetables",
     price: 25000,
     image: "/images/onions.svg",
-    createdAt: "2026-04-13T12:00:00Z",
+    createdAt: new Date().toISOString(),
     status: "verified",
   },
   {
@@ -124,7 +124,7 @@ const commodityBlueprints = [
     category: "Tubers",
     price: 8000,
     image: "/images/potatoes.jpg",
-    createdAt: "2026-04-13T12:00:00Z",
+    createdAt: new Date().toISOString(),
     status: "verified",
   },
   {
@@ -133,7 +133,7 @@ const commodityBlueprints = [
     category: "Seafood",
     price: 95000,
     image: "/images/crayfish.jpg",
-    createdAt: "2026-04-13T12:00:00Z",
+    createdAt: new Date().toISOString(),
     status: "rejected",
   },
   {
@@ -142,7 +142,7 @@ const commodityBlueprints = [
     category: "Poultry",
     price: 4200,
     image: "/images/eggs.jpg",
-    createdAt: "2026-04-13T12:00:00Z",
+    createdAt: new Date().toISOString(),
     status: "pending",
   },
   {
@@ -151,7 +151,7 @@ const commodityBlueprints = [
     category: "Condiments",
     price: 1500,
     image: "/images/iru.jpg",
-    createdAt: "2026-04-13T12:00:00Z",
+    createdAt: new Date().toISOString(),
     status: "verified",
   },
 ];
