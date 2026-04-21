@@ -7,7 +7,7 @@ import { useMemo, useState } from "react";
 import { priceHistory } from "../utils/priceHistoryData";
 import AppShell from "../components/layout/AppShell";
 import { initialReports } from "../utils/initialData";
-import { timeAgo } from "../utils/TimeAgo";
+import { timeAgo } from "../utils/timeAgo";
 import { handleGeneralShare } from "../utils/share";
 
 // 1. Get dynamic items from localStorage (or Redux if you're using it)
