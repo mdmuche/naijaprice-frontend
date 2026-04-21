@@ -172,7 +172,7 @@ function Prices() {
         );
       }
     }
-  }, [preferredIds, dispatch]);
+  }, [preferredIds, allMarkets, dispatch]);
 
   return (
     <AppShell contentClassName="space-y-6 px-3 py-4 md:px-6 md:py-6">
