@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import Card from "./ui/Card";
+import { handleGeneralShare } from "../utils/share";
 
 const alertConfig = {
   drop: {
@@ -33,8 +34,7 @@ const alertConfig = {
     label: "Best deal",
   },
 };
-
-function AlertCard({ alertDesc, status, timeAgo }) {
+function AlertCard({ alertDesc, status, timeAgo, title, market, price, id }) {
   const [progress, setProgress] = useState(0);
   const config = alertConfig[status];
   const Icon = config?.icon;
@@ -53,7 +53,9 @@ function AlertCard({ alertDesc, status, timeAgo }) {
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex items-start gap-3">
-            <div className={`rounded-2xl p-3 ${config?.tone || "bg-gray-100 text-gray-500"}`}>
+            <div
+              className={`rounded-2xl p-3 ${config?.tone || "bg-gray-100 text-gray-500"}`}
+            >
               {Icon ? <Icon size={18} /> : null}
             </div>
             <div className="space-y-1">
@@ -72,11 +74,36 @@ function AlertCard({ alertDesc, status, timeAgo }) {
         <div className="flex items-center justify-between gap-3">
           <span className="text-xs text-gray-400">{timeAgo}</span>
           <div className="flex items-center gap-2 text-gray-500">
-            <button type="button" className="rounded-full p-2 transition-colors hover:bg-gray-100">
-              {status === "best" ? <Send size={16} /> : <Eye size={16} />}
+            <button
+              type="button"
+              className="rounded-full p-2 transition-colors hover:bg-gray-100"
+            >
+              {status === "best" ? (
+                <Send
+                  size={16}
+                  className="cursor-pointer"
+                  onClick={() =>
+                    handleGeneralShare({
+                      title,
+                      market,
+                      price,
+                      id,
+                    })
+                  }
+                />
+              ) : (
+                <Eye size={16} />
+              )}
             </button>
-            <button type="button" className="rounded-full p-2 transition-colors hover:bg-gray-100">
-              {status === "anomally" ? <Flag size={16} /> : <BellOff size={16} />}
+            <button
+              type="button"
+              className="rounded-full p-2 transition-colors hover:bg-gray-100"
+            >
+              {status === "anomally" ? (
+                <Flag size={16} />
+              ) : (
+                <BellOff size={16} />
+              )}
             </button>
           </div>
         </div>

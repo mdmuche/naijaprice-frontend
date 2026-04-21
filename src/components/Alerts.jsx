@@ -48,6 +48,10 @@ function AlertList({ alerts, loading }) {
               alertDesc={alert.alertDesc}
               status={alert.status}
               timeAgo={alert.timeAgo}
+              id={alert.id}
+              market={alert.market}
+              price={alert.price}
+              title={alert.alertDesc}
             />
           </MotionItem>
         ))}

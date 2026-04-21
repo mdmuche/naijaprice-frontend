@@ -8,6 +8,7 @@ import { priceHistory } from "../utils/priceHistoryData";
 import AppShell from "../components/layout/AppShell";
 import { initialReports } from "../utils/initialData";
 import { timeAgo } from "../utils/TimeAgo";
+import { handleGeneralShare } from "../utils/share";
 
 // 1. Get dynamic items from localStorage (or Redux if you're using it)
 const localData =
@@ -52,6 +53,15 @@ function Commodity() {
     ? timeAgo(previousReport.createdAt)
     : "previous";
 
+  const onShareClick = () => {
+    handleGeneralShare({
+      title: commodityData.title,
+      market: activeMarket,
+      price: commodityData.price,
+      id: commodityData.id,
+    });
+  };
+
   return (
     <AppShell contentClassName="flex flex-col gap-4 p-2 sm:p-4">
       {commodityData ? (
@@ -66,7 +76,12 @@ function Commodity() {
                 <span className="font-semibold">Tomatoes (Big Basket)</span>
               </p>
             </div>
-            <BtnSecondary icon={<Share2 size={16} />} text="Share" />
+            <BtnSecondary
+              className="cursor-pointer"
+              onClick={onShareClick}
+              icon={<Share2 size={16} />}
+              text="Share"
+            />
           </div>
 
           <div className="flex flex-col items-center p-4">
