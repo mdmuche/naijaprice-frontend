@@ -80,16 +80,18 @@ function CreatePrice() {
         { enableHighAccuracy: true, timeout: 5000 },
       );
     }
-  }, []);
+  }, [allMarkets]);
 
   // --- 2. DYNAMIC ITEM FILTERING ---
   const filteredItems = useMemo(() => {
-    return commodities.filter((item) => {
+    return commodities.filter((item, index, arr) => {
       const matchesCategory = item.category === selectedCategory;
       const matchesSearch = item.title
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
-      return matchesCategory && matchesSearch;
+      const firstOccurence =
+        arr.findIndex((t) => t.title === item.title) === index;
+      return matchesCategory && matchesSearch && firstOccurence;
     });
   }, [selectedCategory, searchQuery, commodities]);
 
@@ -234,7 +236,7 @@ function CreatePrice() {
     <div className="flex h-screen overflow-hidden bg-gray-50">
       <Navigation />
 
-      <div className="w-full flex flex-col gap-4 p-2 mt-4 lg:mt-0 lg:p-6 md:ml-64 overflow-y-auto ">
+      <div className="w-full flex flex-col gap-4 p-2 mt-20 sm:mt-0 lg:p-6 md:ml-64 overflow-y-auto ">
         {/* HEADER SECTION */}
         <header className="w-full mb-2">
           <h1 className="text-2xl font-bold text-gray-800">Add Price Report</h1>
@@ -430,8 +432,8 @@ function CreatePrice() {
                 <h3 className="text-lg font-bold text-gray-800 mb-4">
                   3. Current Price
                 </h3>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center w-14 h-14 bg-gray-100 rounded-xl text-gray-400 font-bold text-xl">
+                <div className="flex items-center justify-between">
+                  <div className="w-[10%] flex items-center justify-center h-14 bg-gray-100 rounded-xl text-gray-400 font-bold text-xl">
                     ₦
                   </div>
                   <input
@@ -439,7 +441,7 @@ function CreatePrice() {
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
                     placeholder="0.00"
-                    className="flex-1 h-14 text-2xl font-bold border-b-2 border-gray-100 focus:border-[#00C950] outline-none transition-all placeholder:text-gray-200"
+                    className="flex-1 w-[80%] h-14 text-2xl font-bold border-b-2 border-gray-100 focus:border-[#00C950] outline-none transition-all placeholder:text-gray-200"
                   />
                 </div>
                 <p className="text-xs text-gray-400 mt-2 italic">
@@ -457,7 +459,7 @@ function CreatePrice() {
                     value={item}
                     onChange={(e) => setItem(e.target.value)}
                     placeholder={`1 ${unit}`}
-                    className="flex-1 h-14 text-2xl font-bold border-b-2 border-gray-100 focus:border-[#00C950] outline-none transition-all placeholder:text-gray-200"
+                    className="flex-1 w-full h-14 text-2xl font-bold border-b-2 border-gray-100 focus:border-[#00C950] outline-none transition-all placeholder:text-gray-200"
                   />
                 </div>
                 <p className="text-xs text-gray-400 mt-2 italic">
