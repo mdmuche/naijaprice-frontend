@@ -5,10 +5,12 @@ import AuthLayout from "../components/auth/AuthLayout";
 import FormField from "../components/forms/FormField";
 import Button from "../components/ui/Button";
 import { loginUser } from "../store/slices/userSlice";
+import { Eye, EyeOff } from "lucide-react";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
   const dispatch = useDispatch();
@@ -45,7 +47,6 @@ function Login() {
             {error}
           </p>
         )}
-
         <FormField
           required
           type="email"
@@ -54,15 +55,24 @@ function Login() {
           placeholder="yourname@gmail.com"
           onChange={(e) => setEmail(e.target.value)}
         />
+        <div className="relative">
+          <FormField
+            required
+            type={showPassword ? "text" : "password"}
+            label="Password"
+            value={password}
+            placeholder="********"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-4 top-9.5 text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
+        </div>
 
-        <FormField
-          required
-          type="password"
-          label="Password"
-          value={password}
-          placeholder="********"
-          onChange={(e) => setPassword(e.target.value)}
-        />
         <div className="flex justify-end mt-2">
           <Link
             to="/forgot-password"
@@ -71,7 +81,6 @@ function Login() {
             Forgot password?
           </Link>
         </div>
-
         <Button type="submit" className="w-full">
           Log In
         </Button>
